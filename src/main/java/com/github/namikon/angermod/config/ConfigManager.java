@@ -33,7 +33,9 @@ public abstract class ConfigManager {
 	 protected abstract void Init();
 	 protected abstract void PostInit();
 	 
-	 public ConfigManager(FMLPreInitializationEvent pEvent) {
+	 
+	 public ConfigManager(FMLPreInitializationEvent pEvent)
+	 {
 		 _event = pEvent;
 	 }
 	 
@@ -93,7 +95,7 @@ public abstract class ConfigManager {
 	    }
 	    
 	    File tRealConfigFile = new File(_mainconfigDir + "\\" + Reference.MODID + ".cfg");
-	    
+    
 	    _mainConfig = new Configuration(tRealConfigFile);
 	 }
 }

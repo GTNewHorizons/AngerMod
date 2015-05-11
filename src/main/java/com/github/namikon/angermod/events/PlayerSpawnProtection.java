@@ -8,6 +8,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 
+import com.github.namikon.angermod.AngerMod;
 import com.github.namikon.angermod.auxiliary.LogHelper;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -20,12 +21,14 @@ public class PlayerSpawnProtection {
 	 * @param event
 	 */
 	@SubscribeEvent
-	@SideOnly(Side.SERVER)
 	public void onPlayerSpawn(EntityJoinWorldEvent event)
 	{
-		if (event.entity instanceof EntityPlayerMP)
+		if(!event.world.isRemote)
+			return;
+
+		if (event.entity instanceof EntityPlayer)
 		{
-			EntityPlayerMP tEP = (EntityPlayerMP)event.entity;
+			EntityPlayer tEP = (EntityPlayer)event.entity;
 			if (!tEP.capabilities.disableDamage)
 			{
 				tEP.addChatComponentMessage(new ChatComponentText(EnumChatFormatting.DARK_GREEN + "A magic bubble of protection appears..."));
@@ -34,15 +37,18 @@ public class PlayerSpawnProtection {
 			}
 		}
 	}
+
 	
 	/**
 	 * Remove player-protection as soon as the player starts to hit an entity
 	 * @param event
 	 */
 	@SubscribeEvent
-	@SideOnly(Side.SERVER)
 	public void onAttackEntity(AttackEntityEvent event)
 	{
+		if(!event.entityPlayer.worldObj.isRemote)
+			return;
+		
 		if (event.entityPlayer.capabilities.disableDamage)
 		{
 			event.entityPlayer.capabilities.disableDamage = false;

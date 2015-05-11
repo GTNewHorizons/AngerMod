@@ -20,6 +20,7 @@ public class AngerModConfig extends ConfigManager {
 	 private String tCfgBlacklistedEndBlocks[] = null;
 	 private String tCfgBlacklistedNetherBlocks[] = null;
 
+	 //private List<String> _mUnprotectedPlayers = null;
 	 
 	
 	public AngerModConfig(FMLPreInitializationEvent pEvent) {
@@ -47,6 +48,7 @@ public class AngerModConfig extends ConfigManager {
 		 
 		 EndermanAggrorange = 16;
 		 PigmenAggrorange = 16;
+		 //_mUnprotectedPlayers = new ArrayList<String>();
 	 }
 
 	@Override
@@ -64,6 +66,11 @@ public class AngerModConfig extends ConfigManager {
 		 EndermanAggrorange = _mainConfig.getInt("Enderman", "Aggrorange", EndermanAggrorange, 2, 128, "The maximum range where Enderman shall become angry");
 		 PigmenAggrorange = _mainConfig.getInt("Pigmen", "Aggrorange", PigmenAggrorange, 2, 128, "The maximum range where Pigmen shall become angry");
 		 NewPlayerProtection = _mainConfig.getBoolean("ProtectionEnabled", "SpawnProtection", true, "Define if new players / respawned players shall be ignored from monsters until they attack something");
+		 
+/*		 String[] tUnprotectedPlayers = _mainConfig.getStringList("ListOfNames", "ProtectionBlacklist", new String[] {}, "List of all Names who shall not get the protection bubble. This list will automaticly fill with new names as soon as the player reaches a certain limit");
+		 for (String player : tUnprotectedPlayers)
+			 _mUnprotectedPlayers.add(player);
+*/
 	}
 
 	

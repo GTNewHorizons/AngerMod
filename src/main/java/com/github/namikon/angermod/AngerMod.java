@@ -4,6 +4,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -24,6 +25,7 @@ import com.github.namikon.angermod.events.BlockBreakEvent;
 public class AngerMod {
 	private static AngerModConfig _cfgManager = null;
 	public static boolean ModInitSuccessful = true;
+	
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
