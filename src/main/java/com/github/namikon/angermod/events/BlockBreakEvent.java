@@ -18,16 +18,16 @@ import java.util.List;
 import com.github.namikon.angermod.AngerMod;
 import com.github.namikon.angermod.auxiliary.LogHelper;
 import com.github.namikon.angermod.auxiliary.MinecraftBlock;
-import com.github.namikon.angermod.config.ConfigManager;
+import com.github.namikon.angermod.config.AngerModConfig;
 
 /**
  * @author Namikon
  *
  */
 public class BlockBreakEvent {
-	private ConfigManager _mConfig = null;
+	private AngerModConfig _mConfig = null;
 	
-	public BlockBreakEvent(ConfigManager pCfgMan) {
+	public BlockBreakEvent(AngerModConfig pCfgMan) {
 		_mConfig = pCfgMan;
 	}
 	

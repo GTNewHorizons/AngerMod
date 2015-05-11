@@ -20,46 +20,21 @@ import org.apache.commons.io.FileUtils;
  * config class to read/setup config files and folders
  * @author Namikon
  */
-public class ConfigManager {
+public abstract class ConfigManager {
 	private File _mainconfigDir = null;
 	private File _blocksconfigDir = null;
 	
-	private Configuration _mainConfig = null;
+	protected Configuration _mainConfig = null;
 	FMLPreInitializationEvent _event = null;
-
-	 public List<MinecraftBlock> BlacklistedBlocks = null;
-	 public int EndermanAggrorange;
-	 public int PigmenAggrorange;
 	 
 	 public boolean DoDebugMessages = false;
+
+	 protected abstract void PreInit();
+	 protected abstract void Init();
+	 protected abstract void PostInit();
 	 
-	 private String[] _mDefaultBlacklistedEndBlocks = null;
-	 private String[] _mDefaultBlacklistedNetherBlocks = null;
-	
 	 public ConfigManager(FMLPreInitializationEvent pEvent) {
 		 _event = pEvent;
-		 PreInit();
-	 }
-	 
-	 
-	 /**
-	 * PreInit default values and lists
-	 */
-	private void PreInit()
-	 {
-		BlacklistedBlocks = new ArrayList<MinecraftBlock>();
-		
-		 _mDefaultBlacklistedEndBlocks = new String[] { 
-				 "minecraft:end_stone",
-				 "gregtech:gt.blockores"
-		 };
-		 
-		 _mDefaultBlacklistedNetherBlocks = new String[] {
-				 "gregtech:gt.blockores",
-		 };
-		 
-		 EndermanAggrorange = 16;
-		 PigmenAggrorange = 16;
 	 }
 	 
 	 /**
@@ -70,28 +45,21 @@ public class ConfigManager {
 	 {
 		 try
 		 {
+			 InitConfigDirs();
 			 if (_mainConfig == null)
-			 {
-				 LogHelper.error("Y u no call InitConfigDirs first?");
 				 return false;
-			 }
-				 
+			 
+			 PreInit();
 			 _mainConfig.load();
-			 
-			 String tCfgBlacklistedEndBlocks[] = _mainConfig.getStringList("EndBlocks", "Blacklist", _mDefaultBlacklistedEndBlocks, "Define all Blocks here where Enderman should become angry when you break them");
-			 String tCfgBlacklistedNetherBlocks[] = _mainConfig.getStringList("NetherBlocks", "Blacklist", _mDefaultBlacklistedNetherBlocks, "Define all Blocks here where Pigmen should become angry when you break them");
-			 
-			 EndermanAggrorange = _mainConfig.getInt("Enderman", "Aggrorange", EndermanAggrorange, 2, 128, "The maximum range where Enderman shall become angry");
-			 PigmenAggrorange = _mainConfig.getInt("Pigmen", "Aggrorange", PigmenAggrorange, 2, 128, "The maximum range where Pigmen shall become angry");
+			 Init();
 			 
 			 DoDebugMessages = _mainConfig.getBoolean("DoDebugMessages", "Debug", false, "Enable debug output to fml-client-latest.log");
-			 
 			 LogHelper.setDebugOutput(DoDebugMessages);
-			 
 			 _mainConfig.save();
 			 
-			 ParseBlacklistedBlocks(tCfgBlacklistedEndBlocks, 1);
-			 ParseBlacklistedBlocks(tCfgBlacklistedNetherBlocks, -1);
+			 PostInit();
+			 
+
 			 
 			 return true;
 		 }
@@ -104,42 +72,13 @@ public class ConfigManager {
 	 }
 	 
 	 
-	 /**
-	  * Go ahead and parse the given list of strings to actual instances of MinecraftBlock classes with bound dimension ID
-	 * @param pBlockNames
-	 * @param pDimension
-	 */
-	private void ParseBlacklistedBlocks(String pBlockNames[], int pDimension)
-	 {
-		 try
-		 {
-			 for (String tBlockName : pBlockNames)
-			 {
-				 try
-				 {
-					 MinecraftBlock tBlock = new MinecraftBlock(tBlockName, pDimension);
-					 LogHelper.info("New block added for Dimension " + pDimension + " BlockID: " + tBlockName);
-					 BlacklistedBlocks.add(tBlock); // TODO: Make sure we only add each block once... 
-				 }
-				 catch (Exception e)
-				 {
-					 LogHelper.warn("NetherBlock Definition " + tBlockName + " will be ignored. Check your spelling [ModID]:[BlockName] or [ModID]:[BlockName]:[BlockMeta]");
-					 LogHelper.DumpStack(e);
-				 }
-			 }
-		 }
-		 catch (Exception e)
-		 {
-			 LogHelper.error("Error while parsing Blacklist for Nether blocks");
-			 LogHelper.DumpStack(e);
-		 }
-	 }
+
 
 	 
 	 /**
 	 * Search for required config-directory / file and create them if they can't be found 
 	 */
-	public void InitConfigDirs()
+	private void InitConfigDirs()
 	 {
 		 LogHelper.info("Checking/creating config folders");
 		 

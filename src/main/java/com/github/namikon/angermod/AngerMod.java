@@ -1,5 +1,6 @@
 package com.github.namikon.angermod;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -10,8 +11,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
 import com.github.namikon.angermod.auxiliary.*;
-import com.github.namikon.angermod.config.ConfigManager;
+import com.github.namikon.angermod.config.AngerModConfig;
+import com.github.namikon.angermod.events.PlayerSpawnProtection;
 import com.github.namikon.angermod.events.BlockBreakEvent;
+
 
 /**
  * @author Namikon
@@ -19,7 +22,7 @@ import com.github.namikon.angermod.events.BlockBreakEvent;
  */
 @Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION)
 public class AngerMod {
-	private static ConfigManager _cfgManager = null;
+	private static AngerModConfig _cfgManager = null;
 	public static boolean ModInitSuccessful = true;
 	
 	@EventHandler
@@ -27,8 +30,7 @@ public class AngerMod {
 	{
 		try 
 		{
-			_cfgManager = new ConfigManager(event);
-			_cfgManager.InitConfigDirs();
+			_cfgManager = new AngerModConfig(event);
 			if (!_cfgManager.LoadConfig())
 				ModInitSuccessful = false;
 		}
@@ -46,6 +48,13 @@ public class AngerMod {
 		{
 			BlockBreakEvent tBreakEvent = new BlockBreakEvent(_cfgManager);
 			MinecraftForge.EVENT_BUS.register(tBreakEvent);
+			
+			if (_cfgManager.NewPlayerProtection)
+			{
+				LogHelper.info("Spawn-Protection is enabled. Players will be protected until they attack");
+				PlayerSpawnProtection tLUE = new PlayerSpawnProtection();
+				MinecraftForge.EVENT_BUS.register(tLUE);
+			}
 		}
 		else
 			LogHelper.warn(Reference.MODID + " will NOT do anything as there where errors due the preInit event. Check the logfile!");
