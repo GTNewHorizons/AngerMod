@@ -23,12 +23,12 @@ public class PlayerSpawnProtection {
 	@SubscribeEvent
 	public void onPlayerSpawn(EntityJoinWorldEvent event)
 	{
-		if(!event.world.isRemote)
+		if(event.world.isRemote)
 			return;
 
-		if (event.entity instanceof EntityPlayer)
+		if (event.entity instanceof EntityPlayerMP)
 		{
-			EntityPlayer tEP = (EntityPlayer)event.entity;
+			EntityPlayerMP tEP = (EntityPlayerMP)event.entity;
 			if (!tEP.capabilities.disableDamage)
 			{
 				tEP.addChatComponentMessage(new ChatComponentText(EnumChatFormatting.DARK_GREEN + "A magic bubble of protection appears..."));
@@ -46,7 +46,7 @@ public class PlayerSpawnProtection {
 	@SubscribeEvent
 	public void onAttackEntity(AttackEntityEvent event)
 	{
-		if(!event.entityPlayer.worldObj.isRemote)
+		if(event.entityPlayer.worldObj.isRemote)
 			return;
 		
 		if (event.entityPlayer.capabilities.disableDamage)
