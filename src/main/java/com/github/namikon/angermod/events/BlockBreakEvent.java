@@ -21,6 +21,8 @@ import com.github.namikon.angermod.auxiliary.MinecraftBlock;
 import com.github.namikon.angermod.config.AngerModConfig;
 
 /**
+ * Class for handling all block-break code that will cause mobs become hostile against the player, depending on
+ * the configuration
  * @author Namikon
  *
  */

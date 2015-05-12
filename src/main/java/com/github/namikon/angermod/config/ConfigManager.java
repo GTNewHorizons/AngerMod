@@ -7,13 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.LogManager;
-
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-
 import com.github.namikon.angermod.auxiliary.*;
-
 import net.minecraftforge.common.config.Configuration;
-
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -25,8 +20,8 @@ public abstract class ConfigManager {
 	private File _blocksconfigDir = null;
 	
 	protected Configuration _mainConfig = null;
-	FMLPreInitializationEvent _event = null;
-	 
+
+	protected File _mConfigBaseDirectory;
 	 public boolean DoDebugMessages = false;
 
 	 protected abstract void PreInit();
@@ -34,9 +29,9 @@ public abstract class ConfigManager {
 	 protected abstract void PostInit();
 	 
 	 
-	 public ConfigManager(FMLPreInitializationEvent pEvent)
+	 public ConfigManager(File pConfigBaseDirectory)
 	 {
-		 _event = pEvent;
+		 _mConfigBaseDirectory = pConfigBaseDirectory;
 	 }
 	 
 	 /**
@@ -84,10 +79,7 @@ public abstract class ConfigManager {
 	 {
 		 LogHelper.info("Checking/creating config folders");
 		 
-		 File file = _event.getSuggestedConfigurationFile();
-		 String cfgDir = file.getParent();
-		 
-		 _mainconfigDir = new File(cfgDir + "\\" + Reference.COLLECTIONNAME);
+		 _mainconfigDir = new File(_mConfigBaseDirectory + "\\" + Reference.COLLECTIONNAME);
 	 
 	    if(!_mainconfigDir.exists()) {
 	    	LogHelper.info("Config folder not found. Creating...");

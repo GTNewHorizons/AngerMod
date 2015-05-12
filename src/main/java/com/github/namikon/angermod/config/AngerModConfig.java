@@ -1,18 +1,25 @@
 package com.github.namikon.angermod.config;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.github.namikon.angermod.auxiliary.LogHelper;
 import com.github.namikon.angermod.auxiliary.MinecraftBlock;
 
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-
+/**
+ * Specific configuration for >this< mod
+ * @author Namikon
+ *
+ */
 public class AngerModConfig extends ConfigManager {
 	 public List<MinecraftBlock> BlacklistedBlocks = null;
 	 public int EndermanAggrorange;
 	 public int PigmenAggrorange;
+	 public int SleepingThreshold;
+	 
 	 public boolean NewPlayerProtection;
+	 public boolean MakeMobsAngryOnBlockBreak;	 
 	 
 	 private String[] _mDefaultBlacklistedEndBlocks = null;
 	 private String[] _mDefaultBlacklistedNetherBlocks = null;
@@ -23,8 +30,8 @@ public class AngerModConfig extends ConfigManager {
 	 //private List<String> _mUnprotectedPlayers = null;
 	 
 	
-	public AngerModConfig(FMLPreInitializationEvent pEvent) {
-		super(pEvent);
+	public AngerModConfig(File pConfigBaseDirectoryt) {
+		super(pConfigBaseDirectoryt);
 	}
 
 	
@@ -48,7 +55,7 @@ public class AngerModConfig extends ConfigManager {
 		 
 		 EndermanAggrorange = 16;
 		 PigmenAggrorange = 16;
-		 //_mUnprotectedPlayers = new ArrayList<String>();
+		 SleepingThreshold = 20;
 	 }
 
 	@Override
@@ -63,14 +70,12 @@ public class AngerModConfig extends ConfigManager {
 		 tCfgBlacklistedEndBlocks = _mainConfig.getStringList("EndBlocks", "Blacklist", _mDefaultBlacklistedEndBlocks, "Define all Blocks here where Enderman should become angry when you break them");
 		 tCfgBlacklistedNetherBlocks = _mainConfig.getStringList("NetherBlocks", "Blacklist", _mDefaultBlacklistedNetherBlocks, "Define all Blocks here where Pigmen should become angry when you break them");
 		 
-		 EndermanAggrorange = _mainConfig.getInt("Enderman", "Aggrorange", EndermanAggrorange, 2, 128, "The maximum range where Enderman shall become angry");
-		 PigmenAggrorange = _mainConfig.getInt("Pigmen", "Aggrorange", PigmenAggrorange, 2, 128, "The maximum range where Pigmen shall become angry");
-		 NewPlayerProtection = _mainConfig.getBoolean("ProtectionEnabled", "SpawnProtection", true, "Define if new players / respawned players shall be ignored from monsters until they attack something");
+		 EndermanAggrorange = _mainConfig.getInt("Enderman", "Limits", EndermanAggrorange, 2, 128, "The maximum range where Enderman shall become angry");
+		 PigmenAggrorange = _mainConfig.getInt("Pigmen", "Limits", PigmenAggrorange, 2, 128, "The maximum range where Pigmen shall become angry");
+		 SleepingThreshold = _mainConfig.getInt("MaxSleepTimes", "Limits", SleepingThreshold, 1, Integer.MAX_VALUE, "How often can a player sleep until his protection bubble will fade on every world-interaction (except breaking blocks with his bare hands)");
 		 
-/*		 String[] tUnprotectedPlayers = _mainConfig.getStringList("ListOfNames", "ProtectionBlacklist", new String[] {}, "List of all Names who shall not get the protection bubble. This list will automaticly fill with new names as soon as the player reaches a certain limit");
-		 for (String player : tUnprotectedPlayers)
-			 _mUnprotectedPlayers.add(player);
-*/
+		 NewPlayerProtection = _mainConfig.getBoolean("ProtectionEnabled", "ModuleControl", true, "Define if new players / respawned players shall be ignored from monsters until they attack something");
+		 MakeMobsAngryOnBlockBreak = _mainConfig.getBoolean("BlockBreakEnabled", "ModuleControl", true, "Enable/disable block-breaking-makes-mobs-angry module");
 	}
 
 	
