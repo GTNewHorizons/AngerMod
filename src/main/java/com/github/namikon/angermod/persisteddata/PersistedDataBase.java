@@ -58,7 +58,7 @@ public class PersistedDataBase implements IPersistedDataBase {
 	@Override
 	public void setValue(String pConfigName, String pConfigValue)
 	{
-		LogHelper.debug("Setting persisted config [" + pConfigName + "] to value [" + pConfigValue + "]");
+		LogHelper.debug(String.format("Setting persisted config [%s] to value [%s]", pConfigName, pConfigValue));
 		
 		_mDataStorage.put(pConfigName, pConfigValue);
 		
@@ -108,7 +108,7 @@ public class PersistedDataBase implements IPersistedDataBase {
 	// TODO: Move this to some global location!
 	private String getStorageFileName()
 	{
-		return _mConfigBaseDirectory + "\\" + Reference.COLLECTIONNAME + "\\" + _mBufferFileName;
+		return String.format("%s%s%s%s%s", _mConfigBaseDirectory, File.separator, Reference.COLLECTIONNAME, File.separator, _mBufferFileName);
 	}
 	
 	/* (non-Javadoc)

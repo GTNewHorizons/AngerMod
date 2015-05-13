@@ -79,7 +79,7 @@ public class AngerMod {
 			}
 		}
 		else
-			LogHelper.warn(Reference.MODID + " will NOT do anything as there where errors due the preInit event. Check the logfile!");
+			LogHelper.warn(String.format("%s will NOT do anything as there where errors due the preInit event. Check the logfile!", Reference.MODID));
 	}
 	
 	@EventHandler

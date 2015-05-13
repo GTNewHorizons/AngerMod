@@ -86,7 +86,13 @@ public class PlayerSpawnProtection {
 		{
 			EntityPlayerMP tEP = (EntityPlayerMP)event.entity;
 			if (!tEP.capabilities.disableDamage)
+			{
+				// Not THE BEST idea, but.. something..
+				if(_mCfgManager.RespawnProtectionOnlyOnDeath && tEP.getScore() > 0)
+					return;
+				
 				GiveProtection(tEP);
+			}
 		}
 	}
 	

@@ -19,7 +19,8 @@ public class AngerModConfig extends ConfigManager {
 	 public int SleepingThreshold;
 	 
 	 public boolean NewPlayerProtection;
-	 public boolean MakeMobsAngryOnBlockBreak;	 
+	 public boolean MakeMobsAngryOnBlockBreak;
+	 public boolean RespawnProtectionOnlyOnDeath;
 	 
 	 private String[] _mDefaultBlacklistedEndBlocks = null;
 	 private String[] _mDefaultBlacklistedNetherBlocks = null;
@@ -27,8 +28,6 @@ public class AngerModConfig extends ConfigManager {
 	 private String tCfgBlacklistedEndBlocks[] = null;
 	 private String tCfgBlacklistedNetherBlocks[] = null;
 
-	 //private List<String> _mUnprotectedPlayers = null;
-	 
 	
 	public AngerModConfig(File pConfigBaseDirectoryt) {
 		super(pConfigBaseDirectoryt);
@@ -76,6 +75,7 @@ public class AngerModConfig extends ConfigManager {
 		 
 		 NewPlayerProtection = _mainConfig.getBoolean("ProtectionEnabled", "ModuleControl", true, "Define if new players / respawned players shall be ignored from monsters until they attack something");
 		 MakeMobsAngryOnBlockBreak = _mainConfig.getBoolean("BlockBreakEnabled", "ModuleControl", true, "Enable/disable block-breaking-makes-mobs-angry module");
+		 RespawnProtectionOnlyOnDeath = _mainConfig.getBoolean("RespawnProtectionOnlyOnDeath", "Protection", false, "If set to true, a player that (re)spawns in any world will only be protected if his score is 0");
 	}
 
 	
@@ -93,12 +93,12 @@ public class AngerModConfig extends ConfigManager {
 				 try
 				 {
 					 MinecraftBlock tBlock = new MinecraftBlock(tBlockName, pDimension);
-					 LogHelper.info("New block added for Dimension " + pDimension + " BlockID: " + tBlockName);
+					 LogHelper.info(String.format("New block added for Dimension: %d BlockID: %s", pDimension, tBlockName));
 					 BlacklistedBlocks.add(tBlock); // TODO: Make sure we only add each block once... 
 				 }
 				 catch (Exception e)
 				 {
-					 LogHelper.warn("NetherBlock Definition " + tBlockName + " will be ignored. Check your spelling [ModID]:[BlockName] or [ModID]:[BlockName]:[BlockMeta]");
+					 LogHelper.warn(String.format("NetherBlock Definition %s will be ignored. Check your spelling [ModID]:[BlockName] or [ModID]:[BlockName]:[BlockMeta]", tBlockName));
 					 LogHelper.DumpStack(e);
 				 }
 			 }

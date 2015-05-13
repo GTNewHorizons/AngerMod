@@ -79,14 +79,14 @@ public abstract class ConfigManager {
 	 {
 		 LogHelper.info("Checking/creating config folders");
 		 
-		 _mainconfigDir = new File(_mConfigBaseDirectory + "\\" + Reference.COLLECTIONNAME);
+		 _mainconfigDir = new File(String.format("%s%s%s", _mConfigBaseDirectory, File.separator, Reference.COLLECTIONNAME));
 	 
 	    if(!_mainconfigDir.exists()) {
 	    	LogHelper.info("Config folder not found. Creating...");
 	    	_mainconfigDir.mkdir();
 	    }
 	    
-	    File tRealConfigFile = new File(_mainconfigDir + "\\" + Reference.MODID + ".cfg");
+	    File tRealConfigFile = new File(String.format("%s%s%s%s", _mainconfigDir, File.separator, Reference.MODID, ".cfg"));
     
 	    _mainConfig = new Configuration(tRealConfigFile);
 	 }

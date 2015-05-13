@@ -26,7 +26,7 @@ public class MinecraftBlock {
 		String tSplitFQBN[] = _mFQBN.split(":");
 		if (tSplitFQBN.length < 2)
 		{
-			LogHelper.error("BlockName " + _mFQBN + " in config is invalid. Make sure you use full [domain]:[blockname] notation!");
+			LogHelper.error(String.format("BlockName %s in config is invalid. Make sure you use full [domain]:[blockname] notation!", _mFQBN));
 			throw new IllegalArgumentException(pFullQualifiedBlockName);
 		}
 		else
@@ -92,7 +92,7 @@ public class MinecraftBlock {
 					LogHelper.debug("_mBlockDomain mismatch");
 			}
 			else
-				LogHelper.debug("DimensionID mismatch " + tPlayerDIM + " != " + _mDimensionID);
+				LogHelper.debug(String.format("DimensionID mismatch %d != %d", tPlayerDIM, _mDimensionID));
 		}
 		catch (Exception e)
 		{
