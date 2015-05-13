@@ -43,7 +43,7 @@ public class KamikazeRevenge {
 				EntityPlayer tEP = (EntityPlayer) pEvent.source.getSourceOfDamage();
 				World tW = tEP.worldObj;
 				
-				if (MathHelper.FlipTheCoin(_mCfg.KamikazeChance))
+				if (!MathHelper.FlipTheCoin(_mCfg.KamikazeChance))
 					return; // Head, you win
 				else
 				{
