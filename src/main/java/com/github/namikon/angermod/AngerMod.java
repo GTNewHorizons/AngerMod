@@ -93,7 +93,7 @@ public class AngerMod {
 			if (_cfgManager.KamikazeMobRevenge)
 			{
 				LogHelper.info("KamikazeMobRevenge is enabled. Have fun :P");
-				KamikazeRevengeModule = new KamikazeRevenge();
+				KamikazeRevengeModule = new KamikazeRevenge(_cfgManager);
 				MinecraftForge.EVENT_BUS.register(KamikazeRevengeModule);				
 			}
 		}

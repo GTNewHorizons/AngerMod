@@ -37,15 +37,23 @@ public class BlockBreakEvent {
 	@SubscribeEvent
 	public void onBreakBlock(BreakEvent pEvent)
 	{
-		for (MinecraftBlock tBlock : _mConfig.BlacklistedBlocks)
+		try
 		{
-			if (tBlock.isEqualTo(pEvent))
+			for (MinecraftBlock tBlock : _mConfig.BlacklistedBlocks)
 			{
-				if (pEvent.getPlayer().dimension == -1) // Nether
-					EntityHelper.DealDamageToEntitiesInRange(pEvent.getPlayer(), _mConfig.PigmenAggrorange, EntityPigZombie.class, 0);
-				else if (pEvent.getPlayer().dimension == 1) // End
-					EntityHelper.DealDamageToEntitiesInRange(pEvent.getPlayer(), _mConfig.EndermanAggrorange, EntityEnderman.class, 0);
+				if (tBlock.isEqualTo(pEvent))
+				{
+					if (pEvent.getPlayer().dimension == -1) // Nether
+						EntityHelper.DealDamageToEntitiesInRange(pEvent.getPlayer(), _mConfig.PigmenAggrorange, EntityPigZombie.class, 0);
+					else if (pEvent.getPlayer().dimension == 1) // End
+						EntityHelper.DealDamageToEntitiesInRange(pEvent.getPlayer(), _mConfig.EndermanAggrorange, EntityEnderman.class, 0);
+				}
 			}
+		}
+		catch (Exception e)
+		{
+			LogHelper.warn("BlockBreakEvent.onBreakBlock.Error", "An error occoured while processing onBreakBlock. Please report");
+			LogHelper.DumpStack("BlockBreakEvent.onBreakBlock.Stack", e);
 		}
 	}
 }

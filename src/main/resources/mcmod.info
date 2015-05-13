@@ -3,7 +3,7 @@
   "modid": "angermod",
   "name": "AngerMod - Angry neutral mobs",
   "description": "Define blocks/events where friendly/neutral mobs shall become angry",
-  "version": "0.3 Beta",
+  "version": "0.4 Beta",
   "mcversion": "1.7.10",
   "url": "",
   "updateUrl": "",

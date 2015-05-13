@@ -29,6 +29,7 @@ public class WorldHelper {
 		}
 		catch (Exception e)
 		{
+			LogHelper.error(String.format("Error while looking for EntityPlayer with Name %s", pName));
 			LogHelper.DumpStack(e);
 		}
 		return tEP;

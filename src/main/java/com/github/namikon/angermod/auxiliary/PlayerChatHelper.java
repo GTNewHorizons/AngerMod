@@ -1,5 +1,6 @@
 package com.github.namikon.angermod.auxiliary;
 
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
@@ -10,6 +11,22 @@ import net.minecraft.util.EnumChatFormatting;
  *
  */
 public class PlayerChatHelper {
+	public static void SendInfo(ICommandSender pCommandSender, String pMessage)
+	{
+		pCommandSender.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + pMessage));
+	}
+	
+	public static void SendError(ICommandSender pCommandSender, String pMessage)
+	{
+		pCommandSender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + pMessage));
+	}
+	
+	public static void SendWarn(ICommandSender pCommandSender, String pMessage)
+	{
+		pCommandSender.addChatMessage(new ChatComponentText(EnumChatFormatting.YELLOW + pMessage));
+	}	
+	
+	
 	public static void SendInfo(EntityPlayer pPlayer, String pMessage)
 	{
 		pPlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + pMessage));
@@ -39,5 +56,6 @@ public class PlayerChatHelper {
 	{
 		pPlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.DARK_PURPLE + pMessage));
 	}
+	
 	
 }

@@ -20,29 +20,48 @@ import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 public class EatCookedAnimalsEvent {
-	private String[] _mPigTrigger = {"pork"};
-	private String[] _mCowTrigger = {"beef"};
-	private String[] _mChickenTrigger = {"chicken", "egg"};
-	private String[] _mSheepTrigger = {"mutton"};
+	private static String[] _mPigTrigger = {"pork"};
+	private static String[] _mCowTrigger = {"beef"};
+	private static String[] _mChickenTrigger = {"chicken", "egg"};
+	private static String[] _mSheepTrigger = {"mutton"};
 	
 	@SubscribeEvent
 	public void onPlayerUsesItem(PlayerUseItemEvent.Start pEvent)
 	{
-		EntityPlayer tEP = pEvent.entityPlayer;
-		if (tEP == null)
-			return;
-		
-		String tUsedItemName = pEvent.item.getUnlocalizedName();
-		TryTriggerAnimals(_mPigTrigger, tUsedItemName, tEP, EntityPig.class);
-		TryTriggerAnimals(_mCowTrigger, tUsedItemName, tEP, EntityCow.class);
-		TryTriggerAnimals(_mChickenTrigger, tUsedItemName, tEP, EntityChicken.class);
-		TryTriggerAnimals(_mSheepTrigger, tUsedItemName, tEP, EntitySheep.class);
+		try
+		{
+			EntityPlayer tEP = pEvent.entityPlayer;
+			if (tEP == null)
+				return;
+			
+			String tUsedItemName = pEvent.item.getUnlocalizedName();
+			LogHelper.info(String.format("Using item %s", tUsedItemName));
+			
+			TryTriggerAnimals(_mPigTrigger, tUsedItemName, tEP, EntityPig.class);
+			TryTriggerAnimals(_mCowTrigger, tUsedItemName, tEP, EntityCow.class);
+			TryTriggerAnimals(_mChickenTrigger, tUsedItemName, tEP, EntityChicken.class);
+			TryTriggerAnimals(_mSheepTrigger, tUsedItemName, tEP, EntitySheep.class);
+		}
+		catch (Exception e)
+		{
+			LogHelper.warn("EatCookedAnimalsEvent.onPlayerUsesItem.Error", "An error occoured while processing onPlayerUsesItem. Please report");
+			LogHelper.DumpStack("EatCookedAnimalsEvent.onPlayerUsesItem.Stack", e);
+		}
 	}
 	
 	private void TryTriggerAnimals(String[] pKeywordList, String pUsedItem, EntityPlayer pEP, Class pMobClassToTrigger)
 	{
-		for(String s : pKeywordList)
-			if(pUsedItem.contains(s))
-				EntityHelper.DealDamageToEntitiesInRange(pEP, 16, pMobClassToTrigger, 0);
+		try
+		{
+			for(String s : pKeywordList)
+				if(pUsedItem.contains(s))
+					EntityHelper.DealDamageToEntitiesInRange(pEP, 16, pMobClassToTrigger, 0);			
+		}
+		catch (Exception e)
+		{
+			LogHelper.warn("EatCookedAnimalsEvent.TryTriggerAnimals.Error", "An error occoured while processing TriggerAnimals. Please report");
+			LogHelper.DumpStack("EatCookedAnimalsEvent.TryTriggerAnimals.Stack", e);
+		}
+
 	}
 }
