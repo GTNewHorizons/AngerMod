@@ -18,6 +18,8 @@ import net.minecraftforge.common.config.Configuration;
 import com.github.namikon.angermod.auxiliary.*;
 import com.github.namikon.angermod.command.AngerProtectionCommand;
 import com.github.namikon.angermod.config.AngerModConfig;
+import com.github.namikon.angermod.events.EatCookedAnimalsEvent;
+import com.github.namikon.angermod.events.KamikazeRevenge;
 import com.github.namikon.angermod.events.PlayerSpawnProtection;
 import com.github.namikon.angermod.events.BlockBreakEvent;
 import com.github.namikon.angermod.iface.IPersistedDataBase;
@@ -31,8 +33,11 @@ import com.github.namikon.angermod.persisteddata.PersistedDataBase;
 @Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION)
 public class AngerMod {
 	private static AngerModConfig _cfgManager = null;
+	
 	public static PlayerSpawnProtection SpawnProtectionModule = null;
 	public static BlockBreakEvent BlockTakeAggroModule = null;
+	public static EatCookedAnimalsEvent EatCookedAnimalsModule = null;
+	public static KamikazeRevenge KamikazeRevengeModule = null;
 	
 	public static boolean ModInitSuccessful = true;
 	private static IPersistedDataBase _mPersistedConfig = null;
@@ -76,6 +81,20 @@ public class AngerMod {
 				LogHelper.info("Spawn-Protection is enabled. Players will be protected until they attack");
 				SpawnProtectionModule = new PlayerSpawnProtection(_cfgManager, _mPersistedConfig);
 				MinecraftForge.EVENT_BUS.register(SpawnProtectionModule);
+			}
+			
+			if (_cfgManager.FriendlyMobRevenge)
+			{
+				LogHelper.info("FriendlyMobRevenge is enabled. Be careful what you eat...");
+				EatCookedAnimalsModule = new EatCookedAnimalsEvent();
+				MinecraftForge.EVENT_BUS.register(EatCookedAnimalsModule);				
+			}
+			
+			if (_cfgManager.KamikazeMobRevenge)
+			{
+				LogHelper.info("KamikazeMobRevenge is enabled. Have fun :P");
+				KamikazeRevengeModule = new KamikazeRevenge();
+				MinecraftForge.EVENT_BUS.register(KamikazeRevengeModule);				
 			}
 		}
 		else

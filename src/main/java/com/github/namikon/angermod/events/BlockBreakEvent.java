@@ -16,6 +16,7 @@ import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import java.util.List;
 
 import com.github.namikon.angermod.AngerMod;
+import com.github.namikon.angermod.auxiliary.EntityHelper;
 import com.github.namikon.angermod.auxiliary.LogHelper;
 import com.github.namikon.angermod.auxiliary.MinecraftBlock;
 import com.github.namikon.angermod.config.AngerModConfig;
@@ -34,63 +35,17 @@ public class BlockBreakEvent {
 	}
 	
 	@SubscribeEvent
-	public void onBreakBlock(BreakEvent event)
+	public void onBreakBlock(BreakEvent pEvent)
 	{
 		for (MinecraftBlock tBlock : _mConfig.BlacklistedBlocks)
 		{
-			if (tBlock.isEqualTo(event))
+			if (tBlock.isEqualTo(pEvent))
 			{
-				TriggerNeutralMobs(event);
+				if (pEvent.getPlayer().dimension == -1) // Nether
+					EntityHelper.DealDamageToEntitiesInRange(pEvent.getPlayer(), _mConfig.PigmenAggrorange, EntityPigZombie.class, 0);
+				else if (pEvent.getPlayer().dimension == 1) // End
+					EntityHelper.DealDamageToEntitiesInRange(pEvent.getPlayer(), _mConfig.EndermanAggrorange, EntityEnderman.class, 0);
 			}
 		}
-	}
-
-	/**
-	 * Attach neutral mobs with 0 damage to switch from neutral to hostile
-	 * @param pEvent
-	 */
-	private void TriggerNeutralMobs(BreakEvent pEvent)
-	{
-		LogHelper.debug("TriggerNeutralMobs called");
-		int tAggroRange = 16;
-		List<Entity> tEntities = null;
-		
-		int x = pEvent.x;
-		int y = pEvent.y;
-		int z = pEvent.z;
-		
-		try
-		{
-			// Get player's boundary box
-			AxisAlignedBB tBoundingBox = AxisAlignedBB.getBoundingBox(
-					x - tAggroRange,
-					y - tAggroRange,
-					z - tAggroRange,
-					x + tAggroRange + 1,
-					y + tAggroRange + 1,
-					z + tAggroRange + 1);
-			
-			EntityPlayer tPlayer = pEvent.getPlayer();
-			if(tPlayer.dimension == -1) // TODO: Make it dynamic..?
-			{
-				tAggroRange = _mConfig.PigmenAggrorange;
-				tEntities = pEvent.world.getEntitiesWithinAABB(EntityPigZombie.class, tBoundingBox);
-			}
-			else if(tPlayer.dimension == 1)
-			{
-				tAggroRange = _mConfig.EndermanAggrorange;
-				tEntities = pEvent.world.getEntitiesWithinAABB(EntityEnderman.class, tBoundingBox);
-			}
-			
-			for (Entity pEntity : tEntities)
-			{
-				pEntity.attackEntityFrom(DamageSource.causePlayerDamage(tPlayer), 0);
-			}
-		}
-		catch(Exception e)
-		{
-			LogHelper.error("BlockBreakEvent.TriggerNeutralMobs.Error", "Error while processing TriggerEvent");
-			LogHelper.DumpStack("BlockBreakEvent.TriggerNeutralMobs.Error.StackTrace", e);
-		}	
 	}
 }
