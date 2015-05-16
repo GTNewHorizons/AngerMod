@@ -35,7 +35,7 @@ public class EatCookedAnimalsEvent {
 				return;
 			
 			String tUsedItemName = pEvent.item.getUnlocalizedName();
-			LogHelper.info(String.format("Using item %s", tUsedItemName));
+			LogHelper.debug(String.format("Using item %s", tUsedItemName));
 			
 			TryTriggerAnimals(_mPigTrigger, tUsedItemName, tEP, EntityPig.class);
 			TryTriggerAnimals(_mCowTrigger, tUsedItemName, tEP, EntityCow.class);
