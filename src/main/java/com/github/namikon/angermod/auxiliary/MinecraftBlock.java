@@ -2,9 +2,12 @@ package com.github.namikon.angermod.auxiliary;
 
 import java.util.logging.LogManager;
 
+import com.github.namikon.angermod.AngerMod;
+
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+import eu.usrv.yamcore.auxiliary.IntHelper;
 
 /**
  * MinecraftBlock definition helper to compare blocks broken while an player break-event
@@ -26,7 +29,7 @@ public class MinecraftBlock {
 		String tSplitFQBN[] = _mFQBN.split(":");
 		if (tSplitFQBN.length < 2)
 		{
-			LogHelper.error(String.format("BlockName %s in config is invalid. Make sure you use full [domain]:[blockname] notation!", _mFQBN));
+			AngerMod.Logger.error(String.format("BlockName %s in config is invalid. Make sure you use full [domain]:[blockname] notation!", _mFQBN));
 			throw new IllegalArgumentException(pFullQualifiedBlockName);
 		}
 		else
@@ -56,48 +59,48 @@ public class MinecraftBlock {
 		boolean tResult = false;
 		int tPlayerDIM = pEventData.getPlayer().dimension;
 		
-		LogHelper.debug("BlockCompare begun ");
+		AngerMod.Logger.debug("BlockCompare begun ");
 		
 		try
 		{
 			if (tPlayerDIM == _mDimensionID)
 			{
-				LogHelper.debug("DimensionID match");
+				AngerMod.Logger.debug("DimensionID match");
 				UniqueIdentifier tBlockDomain = GameRegistry.findUniqueIdentifierFor(pEventData.block);
 				
 				if (tBlockDomain.modId.equalsIgnoreCase(_mBlockDomain)) // BlockDomain ( ModID ) matches
 				{
-					LogHelper.debug("_mBlockDomain match");
+					AngerMod.Logger.debug("_mBlockDomain match");
 					if(tBlockDomain.name.equalsIgnoreCase(_mBlockName)) // BlockName matches
 					{
-						LogHelper.debug("_mBlockName match");
+						AngerMod.Logger.debug("_mBlockName match");
 						if(_mBlockMetaData > 0) // Do we have additional MetaData ?
 						{
 							if(_mBlockMetaData == pEventData.blockMetadata) // MetaData matches
 							{
-								LogHelper.debug("FullMatch");
+								AngerMod.Logger.debug("FullMatch");
 								tResult = true; // we have a hit (with metadata)
 							}	
 						}
 						else
 						{
-							LogHelper.debug("FullMatch (w/o meta)");
+							AngerMod.Logger.debug("FullMatch (w/o meta)");
 							tResult = true; // we have a hit (without metadata)
 						}
 					}
 					else
-						LogHelper.debug("_mBlockName match");
+						AngerMod.Logger.debug("_mBlockName match");
 				}
 				else
-					LogHelper.debug("_mBlockDomain mismatch");
+					AngerMod.Logger.debug("_mBlockDomain mismatch");
 			}
 			else
-				LogHelper.debug(String.format("DimensionID mismatch %d != %d", tPlayerDIM, _mDimensionID));
+				AngerMod.Logger.debug(String.format("DimensionID mismatch %d != %d", tPlayerDIM, _mDimensionID));
 		}
 		catch (Exception e)
 		{
-			LogHelper.error("MinecraftBlock.isEqualTo.Error", "Error while comparing Blockidentifier");
-			LogHelper.DumpStack("MinecraftBlock.isEqualTo.Error.Exception", e);
+			AngerMod.Logger.error("MinecraftBlock.isEqualTo.Error", "Error while comparing Blockidentifier");
+			AngerMod.Logger.DumpStack("MinecraftBlock.isEqualTo.Error.Exception", e);
 		}
 		
 		return tResult;

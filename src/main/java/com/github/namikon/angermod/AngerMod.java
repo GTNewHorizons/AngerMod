@@ -1,38 +1,36 @@
 package com.github.namikon.angermod;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
+import net.minecraftforge.common.MinecraftForge;
+
+import com.github.namikon.angermod.auxiliary.Reference;
+import com.github.namikon.angermod.command.AngerProtectionCommand;
+import com.github.namikon.angermod.config.AngerModConfig;
+import com.github.namikon.angermod.events.BlockBreakEvent;
+import com.github.namikon.angermod.events.EatCookedAnimalsEvent;
+import com.github.namikon.angermod.events.KamikazeRevenge;
+import com.github.namikon.angermod.events.PlayerSpawnProtection;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-
-import com.github.namikon.angermod.auxiliary.*;
-import com.github.namikon.angermod.command.AngerProtectionCommand;
-import com.github.namikon.angermod.config.AngerModConfig;
-import com.github.namikon.angermod.events.EatCookedAnimalsEvent;
-import com.github.namikon.angermod.events.KamikazeRevenge;
-import com.github.namikon.angermod.events.PlayerSpawnProtection;
-import com.github.namikon.angermod.events.BlockBreakEvent;
-import com.github.namikon.angermod.iface.IPersistedDataBase;
-import com.github.namikon.angermod.persisteddata.PersistedDataBase;
+import eu.usrv.yamcore.auxiliary.LogHelper;
+import eu.usrv.yamcore.iface.IPersistedDataBase;
+import eu.usrv.yamcore.persisteddata.PersistedDataBase;
 
 
 /**
  * @author Namikon
  *
  */
-@Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION)
+@Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION, 
+dependencies = 	"required-after:Forge@[10.13.2.1291,);" +
+		"required-after:YAMCore@[0.3,);")
 public class AngerMod {
-	private static AngerModConfig _cfgManager = null;
+	public static AngerModConfig _cfgManager = null;
+	public static LogHelper Logger = new LogHelper("AngerMod");
 	
 	public static PlayerSpawnProtection SpawnProtectionModule = null;
 	public static BlockBreakEvent BlockTakeAggroModule = null;
@@ -47,19 +45,19 @@ public class AngerMod {
 	{
 		try 
 		{
-			_cfgManager = new AngerModConfig(event.getModConfigurationDirectory());
+			_cfgManager = new AngerModConfig(event.getModConfigurationDirectory(), Reference.COLLECTIONNAME, Reference.MODID);
 			if (!_cfgManager.LoadConfig())
 				ModInitSuccessful = false;
 			
-			_mPersistedConfig = new PersistedDataBase(event.getModConfigurationDirectory(), "AngerStorage.ser");
+			_mPersistedConfig = new PersistedDataBase(event.getModConfigurationDirectory(), "AngerStorage.ser", Reference.COLLECTIONNAME);
 			if (!_mPersistedConfig.Load())
 				ModInitSuccessful = false;
 			
 		}
 	    catch (Exception e)
 	    {
-	    	LogHelper.error("Yeeks, I can't load my configuration. What did you do??");
-	    	LogHelper.DumpStack(e);
+	    	Logger.error("Yeeks, I can't load my configuration. What did you do??");
+	    	Logger.DumpStack(e);
 	    }
 	}
 	
@@ -70,7 +68,7 @@ public class AngerMod {
 		{
 			if (_cfgManager.MakeMobsAngryOnBlockBreak)
 			{
-				LogHelper.info("BlockBreak module is enabled. Some mobs will get very angry...");
+				Logger.info("BlockBreak module is enabled. Some mobs will get very angry...");
 				BlockTakeAggroModule = new BlockBreakEvent(_cfgManager);
 				MinecraftForge.EVENT_BUS.register(BlockTakeAggroModule);
 			}
@@ -78,27 +76,27 @@ public class AngerMod {
 			
 			if (_cfgManager.NewPlayerProtection)
 			{
-				LogHelper.info("Spawn-Protection is enabled. Players will be protected until they attack");
+				Logger.info("Spawn-Protection is enabled. Players will be protected until they attack");
 				SpawnProtectionModule = new PlayerSpawnProtection(_cfgManager, _mPersistedConfig);
 				MinecraftForge.EVENT_BUS.register(SpawnProtectionModule);
 			}
 			
 			if (_cfgManager.FriendlyMobRevenge)
 			{
-				LogHelper.info("FriendlyMobRevenge is enabled. Be careful what you eat...");
+				Logger.info("FriendlyMobRevenge is enabled. Be careful what you eat...");
 				EatCookedAnimalsModule = new EatCookedAnimalsEvent();
 				MinecraftForge.EVENT_BUS.register(EatCookedAnimalsModule);				
 			}
 			
 			if (_cfgManager.KamikazeMobRevenge)
 			{
-				LogHelper.info("KamikazeMobRevenge is enabled. Have fun :P");
+				Logger.info("KamikazeMobRevenge is enabled. Have fun :P");
 				KamikazeRevengeModule = new KamikazeRevenge(_cfgManager);
 				MinecraftForge.EVENT_BUS.register(KamikazeRevengeModule);				
 			}
 		}
 		else
-			LogHelper.warn(String.format("%s will NOT do anything as there where errors due the preInit event. Check the logfile!", Reference.MODID));
+			Logger.warn(String.format("%s will NOT do anything as there where errors due the preInit event. Check the logfile!", Reference.MODID));
 	}
 	
 	@EventHandler

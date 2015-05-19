@@ -1,16 +1,9 @@
 package com.github.namikon.angermod.events;
 
-import java.nio.file.AccessMode;
 import java.util.UUID;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayer.EnumStatus;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.WorldProvider;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -18,18 +11,14 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 
 import com.github.namikon.angermod.AngerMod;
-import com.github.namikon.angermod.auxiliary.LogHelper;
-import com.github.namikon.angermod.auxiliary.PermConfigHelper;
-import com.github.namikon.angermod.auxiliary.PlayerChatHelper;
-import com.github.namikon.angermod.auxiliary.PlayerHelper;
 import com.github.namikon.angermod.config.AngerModConfig;
-import com.github.namikon.angermod.iface.IPersistedDataBase;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import eu.usrv.yamcore.auxiliary.LogHelper;
+import eu.usrv.yamcore.auxiliary.PermConfigHelper;
+import eu.usrv.yamcore.auxiliary.PlayerChatHelper;
+import eu.usrv.yamcore.auxiliary.PlayerHelper;
+import eu.usrv.yamcore.iface.IPersistedDataBase;
 
 /**
  * Class for handling the spawn protection. Give/set/watch events,... probably better to split that up later on...
@@ -64,7 +53,7 @@ public class PlayerSpawnProtection {
 			// No player, no bananas
 			if (tEP == null)
 			{
-				LogHelper.error("EntityPlayer is null, but PlayerInteractEvent event was raised. This should not happen!");
+				AngerMod.Logger.error("EntityPlayer is null, but PlayerInteractEvent event was raised. This should not happen!");
 				return;
 			}
 			
@@ -82,8 +71,8 @@ public class PlayerSpawnProtection {
 		}
 		catch (Exception e)
 		{
-			LogHelper.warn("PlayerSpawnProtection.onInteractEvent.Error", "An error occoured while processing onInteractEvent. Please report");
-			LogHelper.DumpStack("PlayerSpawnProtection.onInteractEvent.Stack", e);
+			AngerMod.Logger.warn("PlayerSpawnProtection.onInteractEvent.Error", "An error occoured while processing onInteractEvent. Please report");
+			AngerMod.Logger.DumpStack("PlayerSpawnProtection.onInteractEvent.Stack", e);
 		}
 	}
 	
@@ -114,8 +103,8 @@ public class PlayerSpawnProtection {
 		}
 		catch (Exception e)
 		{
-			LogHelper.warn("PlayerSpawnProtection.onPlayerSpawn.Error", "An error occoured while processing onPlayerSpawn. Please report");
-			LogHelper.DumpStack("PlayerSpawnProtection.onPlayerSpawn.Stack", e);
+			AngerMod.Logger.warn("PlayerSpawnProtection.onPlayerSpawn.Error", "An error occoured while processing onPlayerSpawn. Please report");
+			AngerMod.Logger.DumpStack("PlayerSpawnProtection.onPlayerSpawn.Stack", e);
 		}	
 	}
 	
@@ -133,7 +122,7 @@ public class PlayerSpawnProtection {
 			// No player, no bananas
 			if (tEP == null)
 			{
-				LogHelper.error("EntityPlayer is null, but sleep event was raised. This should not happen!");
+				AngerMod.Logger.error("EntityPlayer is null, but sleep event was raised. This should not happen!");
 				return;
 			}
 	
@@ -160,8 +149,8 @@ public class PlayerSpawnProtection {
 		}
 		catch (Exception e)
 		{
-			LogHelper.warn("PlayerSpawnProtection.onSleepInBedEvent.Error", "An error occoured while processing onSleepInBedEvent. Please report");
-			LogHelper.DumpStack("PlayerSpawnProtection.onSleepInBedEvent.Stack", e);
+			AngerMod.Logger.warn("PlayerSpawnProtection.onSleepInBedEvent.Error", "An error occoured while processing onSleepInBedEvent. Please report");
+			AngerMod.Logger.DumpStack("PlayerSpawnProtection.onSleepInBedEvent.Stack", e);
 		}		
 	}
 	
@@ -182,8 +171,8 @@ public class PlayerSpawnProtection {
 		}
 		catch (Exception e)
 		{
-			LogHelper.warn("PlayerSpawnProtection.onAttackEntity.Error", "An error occoured while processing onAttackEntity. Please report");
-			LogHelper.DumpStack("PlayerSpawnProtection.onAttackEntity.Stack", e);
+			AngerMod.Logger.warn("PlayerSpawnProtection.onAttackEntity.Error", "An error occoured while processing onAttackEntity. Please report");
+			AngerMod.Logger.DumpStack("PlayerSpawnProtection.onAttackEntity.Stack", e);
 		}	
 	}
 

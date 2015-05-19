@@ -2,23 +2,19 @@ package com.github.namikon.angermod.command;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.namikon.angermod.AngerMod;
-import com.github.namikon.angermod.auxiliary.LogHelper;
-import com.github.namikon.angermod.auxiliary.PlayerChatHelper;
-import com.github.namikon.angermod.auxiliary.PlayerHelper;
-import com.github.namikon.angermod.auxiliary.WorldHelper;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
+
+import com.github.namikon.angermod.AngerMod;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import eu.usrv.yamcore.auxiliary.PlayerChatHelper;
+import eu.usrv.yamcore.auxiliary.PlayerHelper;
+import eu.usrv.yamcore.auxiliary.WorldHelper;
 
 
 /**

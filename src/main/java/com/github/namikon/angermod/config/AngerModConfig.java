@@ -4,8 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.namikon.angermod.auxiliary.LogHelper;
+import com.github.namikon.angermod.AngerMod;
 import com.github.namikon.angermod.auxiliary.MinecraftBlock;
+
+import eu.usrv.yamcore.config.ConfigManager;
 
 /**
  * Specific configuration for >this< mod
@@ -19,6 +21,7 @@ public class AngerModConfig extends ConfigManager {
 	 public int PigmenAggrorange;
 	 public int SleepingThreshold;
 	 public int KamikazeChance;
+	 public int FriendlyMobRevengeRadius;
 	 
 	 public boolean NewPlayerProtection;
 	 public boolean MakeMobsAngryOnBlockBreak;
@@ -29,13 +32,20 @@ public class AngerModConfig extends ConfigManager {
 	 
 	 private String[] _mDefaultBlacklistedEndBlocks = null;
 	 private String[] _mDefaultBlacklistedNetherBlocks = null;
-
+	 
+	 public String[] PigFoodTrigger;
+	 public String[] CowFoodTrigger;
+	 public String[] ChickenFoodTrigger;
+	 public String[] SheepFoodTrigger;
+	 public String[] ButcherItems;
+	 
 	 private String tCfgBlacklistedEndBlocks[] = null;
 	 private String tCfgBlacklistedNetherBlocks[] = null;
 
 	
-	public AngerModConfig(File pConfigBaseDirectoryt) {
-		super(pConfigBaseDirectoryt);
+	public AngerModConfig(File pConfigBaseDirectory,
+			String pModCollectionDirectory, String pModID) {
+		super(pConfigBaseDirectory, pModCollectionDirectory, pModID);
 	}
 
 	
@@ -61,6 +71,12 @@ public class AngerModConfig extends ConfigManager {
 		 PigmenAggrorange = 16;
 		 SleepingThreshold = 20;
 		 KamikazeChance = 5;
+		 PigFoodTrigger = new String[] {"pork"};
+		 CowFoodTrigger = new String[] {"beef"};
+		 ChickenFoodTrigger = new String[] {"chicken", "egg"};
+		 SheepFoodTrigger = new String[] {"mutton"};
+		 ButcherItems = new String[] {"flint"};
+		 FriendlyMobRevengeRadius = 16;
 	 }
 
 	@Override
@@ -74,19 +90,26 @@ public class AngerModConfig extends ConfigManager {
 	protected void Init() {
 		 tCfgBlacklistedEndBlocks = _mainConfig.getStringList("EndBlocks", "Blacklist", _mDefaultBlacklistedEndBlocks, "Define all Blocks here where Enderman should become angry when you break them");
 		 tCfgBlacklistedNetherBlocks = _mainConfig.getStringList("NetherBlocks", "Blacklist", _mDefaultBlacklistedNetherBlocks, "Define all Blocks here where Pigmen should become angry when you break them");
+		 ButcherItems = _mainConfig.getStringList("KamikazeItemBlacklist", "Blacklist", ButcherItems, "If the player is using one of these items, entities will not explode if they are killed");
 		 
 		 EndermanAggrorange = _mainConfig.getInt("Enderman", "Limits", EndermanAggrorange, 2, 128, "The maximum range where Enderman shall become angry");
 		 PigmenAggrorange = _mainConfig.getInt("Pigmen", "Limits", PigmenAggrorange, 2, 128, "The maximum range where Pigmen shall become angry");
 		 SleepingThreshold = _mainConfig.getInt("MaxSleepTimes", "Limits", SleepingThreshold, 1, Integer.MAX_VALUE, "How often can a player sleep until his protection bubble will fade on every world-interaction (except breaking blocks with his bare hands)");
 		 KamikazeChance = _mainConfig.getInt("KamikazeChance", "Limits", KamikazeChance, 1, 100, "Chance, in percent, how often a Kamikaze event will happen");
+		 FriendlyMobRevengeRadius = _mainConfig.getInt("FriendlyMobRevengeRadius", "Limits", FriendlyMobRevengeRadius, 2, 128, "The maximum range where animals will flee/become angry once the food-trigger is.. triggered");
 		 
-		 NewPlayerProtection = _mainConfig.getBoolean("ProtectionEnabled", "ModuleControl", true, "Define if new players / respawned players shall be ignored from monsters until they attack something");
-		 MakeMobsAngryOnBlockBreak = _mainConfig.getBoolean("BlockBreakEnabled", "ModuleControl", true, "Enable/disable block-breaking-makes-mobs-angry module");
-		 FriendlyMobRevenge = _mainConfig.getBoolean("FriendlyMobRevenge", "ModuleControl", true, "If set to true, sheep will attack/flee if you eat mutton, pigs if you eat pork,... The attack/flee is based on additional mods you have installed");
-		 KamikazeMobRevenge = _mainConfig.getBoolean("KamikazeMobRevenge", "ModuleControl", true, "Guess what it is ...");
+		 NewPlayerProtection = _mainConfig.getBoolean("ProtectionEnabled", "ModuleControl", false, "Define if new players / respawned players shall be ignored from monsters until they attack something");
+		 MakeMobsAngryOnBlockBreak = _mainConfig.getBoolean("BlockBreakEnabled", "ModuleControl", false, "Enable/disable block-breaking-makes-mobs-angry module");
+		 FriendlyMobRevenge = _mainConfig.getBoolean("FriendlyMobRevenge", "ModuleControl", false, "If set to true, sheep will attack/flee if you eat mutton, pigs if you eat pork,... The attack/flee is based on additional mods you have installed");
+		 KamikazeMobRevenge = _mainConfig.getBoolean("KamikazeMobRevenge", "ModuleControl", false, "Guess what it is ...");
 
 		 RespawnProtectionOnlyOnDeath = _mainConfig.getBoolean("RespawnProtectionOnlyOnDeath", "Protection", false, "If set to true, a player that (re)spawns in any world will only be protected if his score is 0");
 		 KamikazeMobsDoTerrainDamage =  _mainConfig.getBoolean("KamikazeMobsDoTerrainDamage", "Protection", false, "If set to true, the kamikaze event will cause terrain damage (but still follow gamerule 'mobGriefing')");
+		 
+		 PigFoodTrigger = _mainConfig.getStringList("PigFoodTrigger", "MobRevengeTrigger", PigFoodTrigger, "If the food eaten by the player contains these keywords, all PIGS around will become angry (or flee)");
+		 CowFoodTrigger = _mainConfig.getStringList("CowFoodTrigger", "MobRevengeTrigger", CowFoodTrigger, "If the food eaten by the player contains these keywords, all COWS around will become angry (or flee)");
+		 ChickenFoodTrigger = _mainConfig.getStringList("ChickenFoodTrigger", "MobRevengeTrigger", ChickenFoodTrigger, "If the food eaten by the player contains these keywords, all CHICKEN around will become angry (or flee)");
+		 SheepFoodTrigger = _mainConfig.getStringList("SheepFoodTrigger", "MobRevengeTrigger", SheepFoodTrigger, "If the food eaten by the player contains these keywords, all SHEEP around will become angry (or flee)");
 	}
 
 	
@@ -104,20 +127,20 @@ public class AngerModConfig extends ConfigManager {
 				 try
 				 {
 					 MinecraftBlock tBlock = new MinecraftBlock(tBlockName, pDimension);
-					 LogHelper.info(String.format("New block added for Dimension: %d BlockID: %s", pDimension, tBlockName));
+					 AngerMod.Logger.info(String.format("New block added for Dimension: %d BlockID: %s", pDimension, tBlockName));
 					 BlacklistedBlocks.add(tBlock); // TODO: Make sure we only add each block once... 
 				 }
 				 catch (Exception e)
 				 {
-					 LogHelper.warn(String.format("NetherBlock Definition %s will be ignored. Check your spelling [ModID]:[BlockName] or [ModID]:[BlockName]:[BlockMeta]", tBlockName));
-					 LogHelper.DumpStack(e);
+					 AngerMod.Logger.warn(String.format("NetherBlock Definition %s will be ignored. Check your spelling [ModID]:[BlockName] or [ModID]:[BlockName]:[BlockMeta]", tBlockName));
+					 AngerMod.Logger.DumpStack(e);
 				 }
 			 }
 		 }
 		 catch (Exception e)
 		 {
-			 LogHelper.error("Error while parsing Blacklist for Nether blocks");
-			 LogHelper.DumpStack(e);
+			 AngerMod.Logger.error("Error while parsing Blacklist for Nether blocks");
+			 AngerMod.Logger.DumpStack(e);
 		 }
 	 }
 }

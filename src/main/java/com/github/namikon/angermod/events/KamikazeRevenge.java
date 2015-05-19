@@ -1,18 +1,16 @@
 package com.github.namikon.angermod.events;
 
-import java.util.UUID;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
-import com.github.namikon.angermod.auxiliary.LogHelper;
-import com.github.namikon.angermod.auxiliary.MathHelper;
-import com.github.namikon.angermod.auxiliary.PlayerChatHelper;
+import com.github.namikon.angermod.AngerMod;
 import com.github.namikon.angermod.config.AngerModConfig;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import eu.usrv.yamcore.auxiliary.LogHelper;
+import eu.usrv.yamcore.auxiliary.MathHelper;
 
 
 /**
@@ -41,6 +39,17 @@ public class KamikazeRevenge {
 			else
 			{
 				EntityPlayer tEP = (EntityPlayer) pEvent.source.getSourceOfDamage();
+				ItemStack tHeldItem = tEP.inventory.getCurrentItem();
+				if(tHeldItem != null)
+				{
+					String tUnlocItemName = tHeldItem.getUnlocalizedName().toLowerCase();
+					for (String s : AngerMod._cfgManager.ButcherItems)
+					{
+						if(tUnlocItemName.contains(s.toLowerCase()))
+							return; // Player used defined butcher-item to slay animal. Trigger no explosion
+					}
+				}
+				
 				World tW = tEP.worldObj;
 				
 				if (!MathHelper.FlipTheCoin(_mCfg.KamikazeChance))
@@ -57,8 +66,8 @@ public class KamikazeRevenge {
 		}
 		catch (Exception e)
 		{
-			LogHelper.warn("KamikazeRevenge.onEntityDied.Error", "An error occoured while processing onEntityDied. Please report");
-			LogHelper.DumpStack("KamikazeRevenge.onEntityDied.Stack", e);
+			AngerMod.Logger.warn("KamikazeRevenge.onEntityDied.Error", "An error occoured while processing onEntityDied. Please report");
+			AngerMod.Logger.DumpStack("KamikazeRevenge.onEntityDied.Stack", e);
 		}
 	}
 }
