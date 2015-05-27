@@ -19,13 +19,15 @@ public class AngerModConfig extends ConfigManager {
 	 
 	 public int EndermanAggrorange;
 	 public int PigmenAggrorange;
-	 public int SleepingThreshold;
+	 //public int SleepingThreshold;
+	 public int SpawnProtectionTimeout;
+	 public int SpawnProtectionMoveTolerance;
 	 public int KamikazeChance;
 	 public int FriendlyMobRevengeRadius;
 	 
-	 public boolean NewPlayerProtection;
+	 public boolean PlayerSpawnProtection;
 	 public boolean MakeMobsAngryOnBlockBreak;
-	 public boolean RespawnProtectionOnlyOnDeath;
+	 //public boolean RespawnProtectionOnlyOnDeath;
 	 public boolean FriendlyMobRevenge;
 	 public boolean KamikazeMobRevenge;
 	 public boolean KamikazeMobsDoTerrainDamage;
@@ -59,7 +61,6 @@ public class AngerModConfig extends ConfigManager {
 		BlacklistedBlocks = new ArrayList<MinecraftBlock>();
 		
 		 _mDefaultBlacklistedEndBlocks = new String[] { 
-				 "minecraft:end_stone",
 				 "gregtech:gt.blockores"
 		 };
 		 
@@ -69,7 +70,9 @@ public class AngerModConfig extends ConfigManager {
 		 
 		 EndermanAggrorange = 16;
 		 PigmenAggrorange = 16;
-		 SleepingThreshold = 20;
+		 //SleepingThreshold = 20;
+		 SpawnProtectionMoveTolerance = 5;
+		 SpawnProtectionTimeout = 10;
 		 KamikazeChance = 5;
 		 PigFoodTrigger = new String[] {"pork"};
 		 CowFoodTrigger = new String[] {"beef"};
@@ -94,16 +97,18 @@ public class AngerModConfig extends ConfigManager {
 		 
 		 EndermanAggrorange = _mainConfig.getInt("Enderman", "Limits", EndermanAggrorange, 2, 128, "The maximum range where Enderman shall become angry");
 		 PigmenAggrorange = _mainConfig.getInt("Pigmen", "Limits", PigmenAggrorange, 2, 128, "The maximum range where Pigmen shall become angry");
-		 SleepingThreshold = _mainConfig.getInt("MaxSleepTimes", "Limits", SleepingThreshold, 1, Integer.MAX_VALUE, "How often can a player sleep until his protection bubble will fade on every world-interaction (except breaking blocks with his bare hands)");
+		 //SleepingThreshold = _mainConfig.getInt("MaxSleepTimes", "Limits", SleepingThreshold, 1, Integer.MAX_VALUE, "How often can a player sleep until his protection bubble will fade on every world-interaction (except breaking blocks with his bare hands)");
 		 KamikazeChance = _mainConfig.getInt("KamikazeChance", "Limits", KamikazeChance, 1, 100, "Chance, in percent, how often a Kamikaze event will happen");
 		 FriendlyMobRevengeRadius = _mainConfig.getInt("FriendlyMobRevengeRadius", "Limits", FriendlyMobRevengeRadius, 2, 128, "The maximum range where animals will flee/become angry once the food-trigger is.. triggered");
+		 SpawnProtectionTimeout =  _mainConfig.getInt("SpawnProtectionTimeout", "Limits", SpawnProtectionTimeout, 1, 2048, "The maximum number of seconds a player will be protected from damage if he is just standing still and doing nothing");
+		 SpawnProtectionMoveTolerance = _mainConfig.getInt("SpawnProtectionMoveTolerance", "Limits", SpawnProtectionMoveTolerance, 1, 2048, "How many Blocks will the player be able to move away from his initial spawn location until his protection fades");
 		 
-		 NewPlayerProtection = _mainConfig.getBoolean("ProtectionEnabled", "ModuleControl", false, "Define if new players / respawned players shall be ignored from monsters until they attack something");
+		 PlayerSpawnProtection = _mainConfig.getBoolean("ProtectionEnabled", "ModuleControl", false, "Define if new players / respawned players shall be ignored from monsters until they attack something, move or the timer runs out");
 		 MakeMobsAngryOnBlockBreak = _mainConfig.getBoolean("BlockBreakEnabled", "ModuleControl", false, "Enable/disable block-breaking-makes-mobs-angry module");
 		 FriendlyMobRevenge = _mainConfig.getBoolean("FriendlyMobRevenge", "ModuleControl", false, "If set to true, sheep will attack/flee if you eat mutton, pigs if you eat pork,... The attack/flee is based on additional mods you have installed");
 		 KamikazeMobRevenge = _mainConfig.getBoolean("KamikazeMobRevenge", "ModuleControl", false, "Guess what it is ...");
 
-		 RespawnProtectionOnlyOnDeath = _mainConfig.getBoolean("RespawnProtectionOnlyOnDeath", "Protection", false, "If set to true, a player that (re)spawns in any world will only be protected if his score is 0");
+		 //RespawnProtectionOnlyOnDeath = _mainConfig.getBoolean("RespawnProtectionOnlyOnDeath", "Protection", false, "If set to true, a player that (re)spawns in any world will only be protected if his score is 0");
 		 KamikazeMobsDoTerrainDamage =  _mainConfig.getBoolean("KamikazeMobsDoTerrainDamage", "Protection", false, "If set to true, the kamikaze event will cause terrain damage (but still follow gamerule 'mobGriefing')");
 		 
 		 PigFoodTrigger = _mainConfig.getStringList("PigFoodTrigger", "MobRevengeTrigger", PigFoodTrigger, "If the food eaten by the player contains these keywords, all PIGS around will become angry (or flee)");

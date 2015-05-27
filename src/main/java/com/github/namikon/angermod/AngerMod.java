@@ -10,6 +10,7 @@ import com.github.namikon.angermod.events.EatCookedAnimalsEvent;
 import com.github.namikon.angermod.events.KamikazeRevenge;
 import com.github.namikon.angermod.events.PlayerSpawnProtection;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -38,7 +39,7 @@ public class AngerMod {
 	public static KamikazeRevenge KamikazeRevengeModule = null;
 	
 	public static boolean ModInitSuccessful = true;
-	private static IPersistedDataBase _mPersistedConfig = null;
+	//private static IPersistedDataBase _mPersistedConfig = null;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
@@ -48,10 +49,10 @@ public class AngerMod {
 			_cfgManager = new AngerModConfig(event.getModConfigurationDirectory(), Reference.COLLECTIONNAME, Reference.MODID);
 			if (!_cfgManager.LoadConfig())
 				ModInitSuccessful = false;
-			
+			/*
 			_mPersistedConfig = new PersistedDataBase(event.getModConfigurationDirectory(), "AngerStorage.ser", Reference.COLLECTIONNAME);
 			if (!_mPersistedConfig.Load())
-				ModInitSuccessful = false;
+				ModInitSuccessful = false;*/
 			
 		}
 	    catch (Exception e)
@@ -74,11 +75,12 @@ public class AngerMod {
 			}
 
 			
-			if (_cfgManager.NewPlayerProtection)
+			if (_cfgManager.PlayerSpawnProtection)
 			{
 				Logger.info("Spawn-Protection is enabled. Players will be protected until they attack");
-				SpawnProtectionModule = new PlayerSpawnProtection(_cfgManager, _mPersistedConfig);
+				SpawnProtectionModule = new PlayerSpawnProtection(_cfgManager/*, _mPersistedConfig*/);
 				MinecraftForge.EVENT_BUS.register(SpawnProtectionModule);
+				FMLCommonHandler.instance().bus().register(SpawnProtectionModule);
 			}
 			
 			if (_cfgManager.FriendlyMobRevenge)
@@ -112,7 +114,7 @@ public class AngerMod {
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent pEvent)
 	{
-		if (_cfgManager.NewPlayerProtection)
+		if (_cfgManager.PlayerSpawnProtection)
 		{
 			pEvent.registerServerCommand(new AngerProtectionCommand());
 		}

@@ -77,6 +77,7 @@ public class AngerProtectionCommand implements ICommand {
 		  if (tFunction.equalsIgnoreCase("give"))
 		  {
 			  PlayerHelper.GiveProtection(tEP);
+			  AngerMod.SpawnProtectionModule.UpdateOrInitLastCoords(tEP); // Update protection tracker so it doesn't run out instantly
 			  PlayerChatHelper.SendInfo(pCommandSender, "Protection given");
 		  }
 		  else if (tFunction.equalsIgnoreCase("remove"))

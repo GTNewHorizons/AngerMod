@@ -1,5 +1,8 @@
 package com.github.namikon.angermod.events;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,7 +16,10 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import com.github.namikon.angermod.AngerMod;
 import com.github.namikon.angermod.config.AngerModConfig;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import eu.usrv.yamcore.auxiliary.LogHelper;
 import eu.usrv.yamcore.auxiliary.PermConfigHelper;
 import eu.usrv.yamcore.auxiliary.PlayerChatHelper;
@@ -26,16 +32,161 @@ import eu.usrv.yamcore.iface.IPersistedDataBase;
  *
  */
 public class PlayerSpawnProtection {
-	private static final String BED_TIMES = "BedTimes";
-	private IPersistedDataBase _mPersistedConfig = null;
-	private AngerModConfig _mCfgManager = null;
-	
-	public PlayerSpawnProtection(AngerModConfig pConfigManager, IPersistedDataBase pPersistedDataBase)
+	private class PlayerCoords
 	{
-		_mCfgManager = pConfigManager;
-		_mPersistedConfig = pPersistedDataBase;
+		private LogHelper _mLog = AngerMod.Logger;
+		public double _mX;
+		public double _mY;
+		public double _mZ;
+		public long _mProtectionTime;
+		
+		public PlayerCoords(EntityPlayer pEp)
+		{
+			_mX = pEp.posX;
+			_mY = pEp.posY;
+			_mZ = pEp.posZ;
+			_mProtectionTime = System.currentTimeMillis();
+		}
+		
+		public boolean ProtectionVoided(double posX, double posY, double posZ)
+		{
+			try
+			{
+				int tTolerance = AngerMod._cfgManager.SpawnProtectionMoveTolerance;
+				int tMaxtimeout = AngerMod._cfgManager.SpawnProtectionTimeout * 1000;
+				
+				boolean offsetX = OffsetMovement(_mX, posX, tTolerance);
+				//_mLog.info(String.format("X: [%f] - [%f]", x, posX));
+				
+				boolean offsetY = OffsetMovement(_mY, posY, 5); // This is glitchy somehow, maybe need to remove it or increase it to like.. 10
+				//_mLog.info(String.format("Y: [%f] - [%f]", y, posY));
+				
+				boolean offsetZ = OffsetMovement(_mZ, posZ, tTolerance);
+				//_mLog.info(String.format("Z: [%f] - [%f]", z, posZ));
+				
+				long tCurrTime = System.currentTimeMillis();
+				
+				if (offsetX || offsetY || offsetZ)
+				{
+					_mLog.debug(String.format("Protection voided because of player movement X[%s] Y[%s] Z[%s]", offsetX, offsetY, offsetZ));
+					return true;
+				}
+				
+				if ((_mProtectionTime + tMaxtimeout) < tCurrTime)
+				{
+					_mLog.debug("Protection voided because of timeout");
+					return true;
+				}
+				
+				return false;
+			}
+			catch(Exception e)
+			{
+				// What did you do..?
+				return true;
+			}
+		}
+		
+		private boolean OffsetMovement(double pBase, double posX, int pRange)
+		{
+			double tUpper = pBase + pRange;
+			double tLower = pBase - pRange;
+			
+			return (posX > tUpper || posX < tLower);
+		}
 	}
 	
+	private AngerModConfig _mCfgManager = null;
+	private Map<String, PlayerCoords> _mLastCoords = null;
+	private Random _mRnd;
+	private LogHelper _mLog = AngerMod.Logger;
+	
+	public PlayerSpawnProtection(AngerModConfig pConfigManager/*, IPersistedDataBase pPersistedDataBase*/)
+	{
+		_mCfgManager = pConfigManager;
+		_mLastCoords = new HashMap<String, PlayerCoords>();
+		_mRnd = new Random();
+	}
+
+	public void UpdateOrInitLastCoords(EntityPlayer tEP)
+	{
+		if (tEP == null)
+			return;
+		try
+		{
+			_mLog.debug(String.format("Updating player's information about his protection"));
+			String UID = tEP.getUniqueID().toString();
+			PlayerCoords pC = _mLastCoords.get(UID);
+			if (pC != null)
+				_mLastCoords.remove(UID);
+			
+			_mLastCoords.put(UID, new PlayerCoords(tEP));
+		}
+		catch(Exception e)
+		{
+			AngerMod.Logger.warn("PlayerSpawnProtection.UpdateOrInitLastCoords.Error", "An error occoured while processing UpdateOrInitLastCoords. Please report");
+			AngerMod.Logger.DumpStack("PlayerSpawnProtection.UpdateOrInitLastCoords.Stack", e);
+		}
+	}
+	
+	private void CheckMovement(EntityPlayer pPlayer)
+	{
+		if (pPlayer == null)
+			return;
+		
+		try
+		{
+			PlayerCoords pC = _mLastCoords.get(pPlayer.getUniqueID().toString());
+	
+			// for SOME reason (maybe restart) the player has no creative mode, but has disabled damage and
+			// we do not have a record of that. So create one now..
+			if (pC == null)
+				UpdateOrInitLastCoords(pPlayer);
+	
+			pC = _mLastCoords.get(pPlayer.getUniqueID().toString());
+			if (pC == null) // what the ..?
+				_mLog.error("Can't keep track of players movement, something went terrible wrong");
+			else
+				if (pC.ProtectionVoided(pPlayer.posX, pPlayer.posY, pPlayer.posZ))
+					PlayerHelper.RemoveProtection(pPlayer);
+		}
+		catch (Exception e)
+		{
+			AngerMod.Logger.warn("PlayerSpawnProtection.CheckMovement.Error", "An error occoured while processing CheckMovement. Please report");
+			AngerMod.Logger.DumpStack("PlayerSpawnProtection.CheckMovement.Stack", e);
+		}
+	}
+	
+	public boolean HasProtection(EntityPlayer pEP)
+	{
+		if (pEP != null)
+			return pEP.capabilities.disableDamage;
+		else
+			return false;
+	}
+	
+	private void ProcessPlayerLoginOrRespawn(EntityPlayer pPlayer)
+	{
+		try
+		{
+			if (pPlayer.capabilities.isCreativeMode)
+				return;
+			
+			if (!pPlayer.capabilities.disableDamage)
+			{
+				PlayerHelper.GiveProtection(pPlayer);
+				UpdateOrInitLastCoords(pPlayer);
+			}
+		}
+		catch (Exception e)
+		{
+			AngerMod.Logger.warn("PlayerSpawnProtection.ProcessPlayerLoginOrRespawn.Error", "An error occoured while processing ProcessPlayerLoginOrRespawn. Please report");
+			AngerMod.Logger.DumpStack("PlayerSpawnProtection.ProcessPlayerLoginOrRespawn.Stack", e);
+		}	
+	}
+	
+	// Event section below this line \/
+	// ---------------------------------------------------------------------------------
 	/**
 	 * Watch player for any interaction
 	 * @param pEvent
@@ -45,6 +196,12 @@ public class PlayerSpawnProtection {
     {
 		try
 		{
+			if (pEvent.entityPlayer.worldObj.isRemote)
+				return;
+			
+			if (pEvent.entityPlayer.capabilities.isCreativeMode)
+				return;
+			
 			// Not server, do nothing
 			if(pEvent.world.isRemote)
 				return;
@@ -60,9 +217,6 @@ public class PlayerSpawnProtection {
 			if (!tEP.capabilities.disableDamage) // Has no enabled protection, nothing to do here
 				return;
 			
-			if (HasNoobProtection(tEP)) // As long as player has noob protection, opening chests and stuff is allowed
-				return;
-	
 			// Ignore right click on air, and left click in order to break your grave. Everything else removes protection
 			if (pEvent.action == Action.RIGHT_CLICK_AIR || pEvent.action == Action.LEFT_CLICK_BLOCK) 
 				return;
@@ -85,73 +239,33 @@ public class PlayerSpawnProtection {
 	{
 		try
 		{
-			if(event.world.isRemote)
+			if (event.world.isRemote)
 				return;
-	
-			if (event.entity instanceof EntityPlayerMP)
-			{
-				EntityPlayerMP tEP = (EntityPlayerMP)event.entity;
-				if (!tEP.capabilities.disableDamage)
-				{
-					// Not THE BEST idea, but.. something..
-					if(_mCfgManager.RespawnProtectionOnlyOnDeath && tEP.getScore() > 0)
-						return;
-					
-					PlayerHelper.GiveProtection(tEP);
-				}
-			}
+			
+			if (!(event.entity instanceof EntityPlayer))
+				return;
+			
+			EntityPlayer tEP = (EntityPlayer)event.entity;
+			ProcessPlayerLoginOrRespawn(tEP);
 		}
 		catch (Exception e)
 		{
 			AngerMod.Logger.warn("PlayerSpawnProtection.onPlayerSpawn.Error", "An error occoured while processing onPlayerSpawn. Please report");
 			AngerMod.Logger.DumpStack("PlayerSpawnProtection.onPlayerSpawn.Stack", e);
-		}	
+		}
 	}
 	
-	/**
-	 * Detect if player is sleeping in his bed
-	 * @param pEvent
-	 */
 	@SubscribeEvent
-	public void onSleepInBedEvent(PlayerSleepInBedEvent pEvent)
+	public void onPlayerTick(PlayerTickEvent pEvent)
 	{
-		try
+		if (pEvent.player.worldObj.isRemote)
+			return;
+		
+		if (_mRnd.nextInt(40) == 0) // more than enough..
 		{
-			EntityPlayer tEP = pEvent.entityPlayer;
-			
-			// No player, no bananas
-			if (tEP == null)
-			{
-				AngerMod.Logger.error("EntityPlayer is null, but sleep event was raised. This should not happen!");
-				return;
-			}
-	
-			// Only serverside
-			if(tEP.worldObj.isRemote)
-				return;
-	
-			// This is.. stupid.. pEvent.result should be set to OK if at night, but it's always null -.-
-			if (!tEP.worldObj.isDaytime())
-			{
-				int tSleepyTimes = increasePlayerBedTime(tEP.getUniqueID());
-				
-				// Only notify player if they have not reached the theshold yet
-				if(tSleepyTimes < _mCfgManager.SleepingThreshold)
-				{
-					PlayerChatHelper.SendNotifyNormal(tEP, String.format("Your protection weakens as you sleep (%s/%s)", tSleepyTimes, _mCfgManager.SleepingThreshold));
-				}
-				else if (tSleepyTimes == _mCfgManager.SleepingThreshold)
-				{
-					PlayerChatHelper.SendNotifyWarning(tEP, "You are now only protected once you respawn, and");
-					PlayerChatHelper.SendNotifyWarning(tEP, "it will fade as soon as you attack, use tools or machines");
-				}
-			}
+			if (HasProtection(pEvent.player) && !pEvent.player.capabilities.isCreativeMode)
+				CheckMovement(pEvent.player);
 		}
-		catch (Exception e)
-		{
-			AngerMod.Logger.warn("PlayerSpawnProtection.onSleepInBedEvent.Error", "An error occoured while processing onSleepInBedEvent. Please report");
-			AngerMod.Logger.DumpStack("PlayerSpawnProtection.onSleepInBedEvent.Stack", e);
-		}		
 	}
 	
 	/**
@@ -166,6 +280,9 @@ public class PlayerSpawnProtection {
 			if(event.entityPlayer.worldObj.isRemote)
 				return;
 			
+			if (event.entityPlayer.capabilities.isCreativeMode)
+				return;
+			
 			if (event.entityPlayer.capabilities.disableDamage)
 				PlayerHelper.RemoveProtection(event.entityPlayer);
 		}
@@ -175,29 +292,25 @@ public class PlayerSpawnProtection {
 			AngerMod.Logger.DumpStack("PlayerSpawnProtection.onAttackEntity.Stack", e);
 		}	
 	}
+	
+	/**
+	 * Fired once the player changes dimensions
+	 * @param pEvent
+	 */
+	@SubscribeEvent
+	public void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent pEvent)
+	{
+		try
+		{
+			if (pEvent.player.worldObj.isRemote)
+				return;
 
-	private int getPlayerBedTimes(UUID pUserUID)
-	{
-		return _mPersistedConfig.getValueAsInt(PermConfigHelper.BuildConfigValueName(pUserUID, BED_TIMES), 0);
-	}
-	
-	private boolean HasNoobProtection(EntityPlayer pEntityPlayer)
-	{
-		if (pEntityPlayer == null)
-			return false;
-		
-		if (getPlayerBedTimes(pEntityPlayer.getUniqueID()) < _mCfgManager.SleepingThreshold)
-			return true;
-		else
-			return false;
-	}
-	
-	private int increasePlayerBedTime(UUID pUserUID)
-	{
-		int oldVal = getPlayerBedTimes(pUserUID);
-		oldVal++;
-		
-		_mPersistedConfig.setValue(PermConfigHelper.BuildConfigValueName(pUserUID, BED_TIMES), oldVal);
-		return oldVal;
+			ProcessPlayerLoginOrRespawn(pEvent.player);
+		}
+		catch (Exception e)
+		{
+			AngerMod.Logger.warn("PlayerSpawnProtection.onDimensionChange.Error", "An error occoured while processing onDimensionChange. Please report");
+			AngerMod.Logger.DumpStack("PlayerSpawnProtection.onDimensionChange.Stack", e);
+		}
 	}
 }
