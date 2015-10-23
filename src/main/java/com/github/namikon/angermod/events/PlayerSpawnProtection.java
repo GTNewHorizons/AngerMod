@@ -1,5 +1,7 @@
 package com.github.namikon.angermod.events;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -7,11 +9,15 @@ import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+import baubles.api.BaublesApi;
+import baubles.common.Baubles;
 
 import com.github.namikon.angermod.AngerMod;
 import com.github.namikon.angermod.config.AngerModConfig;
@@ -20,6 +26,8 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import eu.usrv.yamcore.auxiliary.LogHelper;
 import eu.usrv.yamcore.auxiliary.PermConfigHelper;
 import eu.usrv.yamcore.auxiliary.PlayerChatHelper;
@@ -174,6 +182,10 @@ public class PlayerSpawnProtection {
 			
 			if (!pPlayer.capabilities.disableDamage)
 			{
+				// Only continue if player has no whitelisted Items
+				if (hasWhitelistedItems(pPlayer))
+					return;
+				
 				PlayerHelper.GiveProtection(pPlayer);
 				UpdateOrInitLastCoords(pPlayer);
 			}
@@ -183,6 +195,68 @@ public class PlayerSpawnProtection {
 			AngerMod.Logger.warn("PlayerSpawnProtection.ProcessPlayerLoginOrRespawn.Error", "An error occoured while processing ProcessPlayerLoginOrRespawn. Please report");
 			AngerMod.Logger.DumpStack("PlayerSpawnProtection.ProcessPlayerLoginOrRespawn.Stack", e);
 		}	
+	}
+
+	/** Load players bauble slots as UIDs
+	 * @param tEP
+	 * @return
+	 */
+	private ArrayList<String> loadItemUIDsFromPlayer(EntityPlayer tEP)
+	{
+		ArrayList<String> tReturnList = new ArrayList<String>();
+		
+		try
+		{
+			// Bauble Slots
+			IInventory tPlayerBaubles = BaublesApi.getBaubles(tEP);
+			if (tPlayerBaubles != null)
+			{
+				ItemStack[] isBaubles = new ItemStack[tPlayerBaubles.getSizeInventory()];
+				
+				for (int i = 0; i < tPlayerBaubles.getSizeInventory(); i++)
+				{
+					isBaubles[i] = tPlayerBaubles.getStackInSlot(i);
+					if (isBaubles[i] != null && isBaubles[i].getItem() != null)
+						tReturnList.add(GameRegistry.findUniqueIdentifierFor(isBaubles[i].getItem()).toString());
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			
+		}
+		
+		return tReturnList;
+	}
+	
+	/** Check if player has some special items in his/her inventory where AngerMod should just do nothing,
+	 * since they're doing stuff with "capabilities.disableDamage"
+	 * 
+	 * This is a temp solution for now; Later on, it might be better (if it has performance issues), to create a buffered UID list for that
+	 * so we don't query the players inventory all the time
+	 * @return
+	 */
+	private boolean hasWhitelistedItems(EntityPlayer tEP)
+	{
+		boolean tFlag = false;
+		try
+		{
+			// Get items on player (Armor baubles,..)
+			ArrayList<String> tItems = loadItemUIDsFromPlayer(tEP);
+		
+			// Check against whitelisted, configured items
+			for (String tItem : _mCfgManager.WhitelistedProtectionItems)
+			{
+				if (tItems.contains(tItem))
+					return true;
+			}
+		}
+		catch (Exception e)
+		{
+			AngerMod.Logger.warn("PlayerSpawnProtection.hasWhitelistedItems.Error", "An error occoured while processing hasWhitelistedItems. Please report");
+			AngerMod.Logger.DumpStack("PlayerSpawnProtection.hasWhitelistedItems.Stack", e);
+		}
+		return tFlag;
 	}
 	
 	// Event section below this line \/
@@ -202,7 +276,7 @@ public class PlayerSpawnProtection {
 			if (pEvent.entityPlayer.capabilities.isCreativeMode)
 				return;
 			
-			// Not server, do nothing
+			// Not server, do nothing. Hey, Namikon from the past, isn't this the same as line 273?
 			if(pEvent.world.isRemote)
 				return;
 			
@@ -215,6 +289,10 @@ public class PlayerSpawnProtection {
 			}
 			
 			if (!tEP.capabilities.disableDamage) // Has no enabled protection, nothing to do here
+				return;
+			
+			// Only continue if player has no whitelisted Items
+			if (hasWhitelistedItems(tEP))
 				return;
 			
 			// Ignore right click on air, and left click in order to break your grave. Everything else removes protection
@@ -245,7 +323,13 @@ public class PlayerSpawnProtection {
 			if (!(event.entity instanceof EntityPlayer))
 				return;
 			
+		
 			EntityPlayer tEP = (EntityPlayer)event.entity;
+
+			// Only continue if player has no whitelisted Items
+			if (hasWhitelistedItems(tEP))
+				return;
+			
 			ProcessPlayerLoginOrRespawn(tEP);
 		}
 		catch (Exception e)
@@ -261,10 +345,17 @@ public class PlayerSpawnProtection {
 		if (pEvent.player.worldObj.isRemote)
 			return;
 		
+		
 		if (_mRnd.nextInt(40) == 0) // more than enough..
 		{
 			if (HasProtection(pEvent.player) && !pEvent.player.capabilities.isCreativeMode)
+			{
+				// Only continue if player has no whitelisted Items
+				if (hasWhitelistedItems(pEvent.player))
+					return;
+				
 				CheckMovement(pEvent.player);
+			}
 		}
 	}
 	
@@ -283,8 +374,15 @@ public class PlayerSpawnProtection {
 			if (event.entityPlayer.capabilities.isCreativeMode)
 				return;
 			
-			if (event.entityPlayer.capabilities.disableDamage)
-				PlayerHelper.RemoveProtection(event.entityPlayer);
+			
+			if (!event.entityPlayer.capabilities.disableDamage)
+				return;
+			
+			// Only continue if player has no whitelisted Items
+			if (hasWhitelistedItems(event.entityPlayer))
+				return;
+			
+			PlayerHelper.RemoveProtection(event.entityPlayer);
 		}
 		catch (Exception e)
 		{

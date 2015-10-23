@@ -40,6 +40,7 @@ public class AngerModConfig extends ConfigManager {
 	 public String[] ChickenFoodTrigger;
 	 public String[] SheepFoodTrigger;
 	 public String[] ButcherItems;
+	 public String[] WhitelistedProtectionItems;
 	 
 	 private String tCfgBlacklistedEndBlocks[] = null;
 	 private String tCfgBlacklistedNetherBlocks[] = null;
@@ -80,6 +81,7 @@ public class AngerModConfig extends ConfigManager {
 		 SheepFoodTrigger = new String[] {"mutton"};
 		 ButcherItems = new String[] {"flint"};
 		 FriendlyMobRevengeRadius = 16;
+		 WhitelistedProtectionItems = new String[] {"EMT:BaseBaubles"};
 	 }
 
 	@Override
@@ -115,6 +117,9 @@ public class AngerModConfig extends ConfigManager {
 		 CowFoodTrigger = _mainConfig.getStringList("CowFoodTrigger", "MobRevengeTrigger", CowFoodTrigger, "If the food eaten by the player contains these keywords, all COWS around will become angry (or flee)");
 		 ChickenFoodTrigger = _mainConfig.getStringList("ChickenFoodTrigger", "MobRevengeTrigger", ChickenFoodTrigger, "If the food eaten by the player contains these keywords, all CHICKEN around will become angry (or flee)");
 		 SheepFoodTrigger = _mainConfig.getStringList("SheepFoodTrigger", "MobRevengeTrigger", SheepFoodTrigger, "If the food eaten by the player contains these keywords, all SHEEP around will become angry (or flee)");
+		 
+
+		 WhitelistedProtectionItems = _mainConfig.getStringList("WhitelistedProtectionItems", "Whitelist", WhitelistedProtectionItems, "Set items here which change players invulnerability. You will notice those, as they will spam the console with *protection fades* messages");
 	}
 
 	
