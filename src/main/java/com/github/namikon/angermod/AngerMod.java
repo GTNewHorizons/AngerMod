@@ -27,8 +27,8 @@ import eu.usrv.yamcore.persisteddata.PersistedDataBase;
  *
  */
 @Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION, 
-dependencies = 	"required-after:Forge@[10.13.2.1291,);" +
-		"required-after:YAMCore@[0.3,);")
+dependencies = 	"required-after:Forge@[10.13.4.1614,);required-after:Baubles@[1.0.1.10,);" +
+		"required-after:YAMCore@[0.3,);", certificateFingerprint = "1cca375192a26693475fb48268f350a462208dce")
 public class AngerMod {
 	public static AngerModConfig _cfgManager = null;
 	public static LogHelper Logger = new LogHelper("AngerMod");

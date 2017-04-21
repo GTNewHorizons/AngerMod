@@ -17,32 +17,45 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.7.10-0.6"
+allprojects {
+    apply plugin: 'java'
+	compileJava.options.encoding = 'UTF-8'
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+	
+file "build.properties" withReader {
+    def prop = new Properties()
+    prop.load(it)
+    ext.config = new ConfigSlurper().parse prop
+}
+
+version = "${config.minecraft.version}-${config.angermod.version}"
 group= "com.github.namikon.angermod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "AngerMod"
 
 minecraft {
-    version = "1.7.10-10.13.2.1291"
+    version = "${config.forge.version}-${config.minecraft.version}"
     runDir = "eclipse"
 	
 	replaceIn "src/main/java/com/github/namikon/angermod/auxiliary/Reference.java"
 	replace "GRADLETOKEN_VERSION", project.version.split('-')[1]
 }
 
+repositories {
+    maven { // GalacticGreg, YAMCore,..
+        name 'UsrvDE'
+        url "http://jenkins.usrv.de:8082/nexus/content/repositories/releases/"
+    }
+    maven { // Baubles
+    	name 'UsrvDE_3rdParty'
+    	url "http://jenkins.usrv.de:8082/nexus/content/repositories/thirdparty/"
+    }
+}
+
 dependencies {
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    compile "eu.usrv:YAMCore:${config.minecraft.version}-${config.yamcore.version}:deobf"
+    compile "com.azanor.baubles:Baubles:${config.baubles.version}:deobf"
 }
 
 processResources
@@ -63,5 +76,26 @@ processResources
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+}
+
+task signJar(dependsOn: 'reobf'){
+    doLast {
+        ant.signjar(
+            destDir: jar.destinationDir,
+            jar: jar.getArchivePath(),
+            alias: findProperty('keyStoreAlias') ?: '',
+            keystore: findProperty('keyStore') ?: '',
+            storepass: findProperty('keyStorePass') ?: '',
+            digestalg: findProperty('signDigestAlg') ?: '',
+            tsaurl: findProperty('signTSAurl') ?: '',
+            verbose: true
+            )
     }
 }

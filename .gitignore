@@ -1,8 +1,5 @@
 eclipse/
-gradle/
 .gradle/
-gradlew.bat
-gradlew
 README.txt
 MinecraftForge-License.txt
 MinecraftForge-Credits.txt
@@ -17,3 +14,4 @@ gradlew.bat - Verknüpfung.lnk
 forge-1.7.10-10.13.2.1291-changelog.txt
 Build.lnk
 SetupWorkspaces.bat
+.project
