@@ -3,6 +3,7 @@ package com.github.namikon.angermod.events;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
 import com.github.namikon.angermod.AngerMod;
@@ -34,7 +35,7 @@ public class KamikazeRevenge {
 	{
 		try
 		{
-			if(!(pEvent.source.getSourceOfDamage() instanceof EntityPlayer))
+			if(!(pEvent.source.getSourceOfDamage() instanceof EntityPlayer) || pEvent.source.getSourceOfDamage() instanceof FakePlayer)
 				return;
 			else
 			{
