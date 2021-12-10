@@ -1,10 +1,10 @@
 [
 {
-  "modid": "angermod",
-  "name": "AngerMod - Angry neutral mobs",
+  "modid": "${modId}",
+  "name": "${modName}",
   "description": "Define blocks/events where friendly/neutral mobs shall become angry",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
+  "version": "${modVersion}",
+  "mcversion": "${minecraftVersion}",
   "url": "",
   "updateUrl": "",
   "authorList": [
