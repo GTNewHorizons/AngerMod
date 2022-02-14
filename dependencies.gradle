@@ -1,6 +1,6 @@
 // Add your dependencies here
 
 dependencies {
-    compile("com.github.GTNewHorizons:Yamcl:master-SNAPSHOT:dev")
-    compile("com.github.GTNewHorizons:Baubles:master-SNAPSHOT:dev")
+    compile('com.github.GTNewHorizons:Yamcl:0.5.82:dev')
+    compile('com.github.GTNewHorizons:Baubles:1.0.1.14:dev')
 }

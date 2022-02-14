@@ -1,18 +1,21 @@
-[
 {
-  "modid": "${modId}",
-  "name": "${modName}",
-  "description": "Define blocks/events where friendly/neutral mobs shall become angry",
-  "version": "${modVersion}",
-  "mcversion": "${minecraftVersion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": [
-"Namikon"
-],
-  "credits": "",
-  "logoFile": "assets/angermod/angermod.png",
-  "screenshots": [],
-  "dependencies": []
+	"modListVersion": 2,
+	"modList": [{
+		"modid": "${modId}",
+		"name": "${modName}",
+		"description": "Define blocks/events where friendly/neutral mobs shall become angry",
+		"version": "${modVersion}",
+		"mcversion": "${minecraftVersion}",
+		"url": "https://github.com/GTNewHorizons/AngerMod",
+		"updateUrl": "",
+		"authorList": [
+			"Namikon"
+		],
+		"credits": "",
+		"logoFile": "assets/angermod/angermod.png",
+		"screenshots": [],
+		"requiredMods": ["Forge@[10.13.4.1614,)", "Baubles@[1.0.1.10,)", "YAMCore@[0.3,)"],
+		"dependencies": ["Baubles@[1.0.1.10,)", "YAMCore@[0.3,)"],
+		"useDependencyInformation": true
+	}]
 }
-]
