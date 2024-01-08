@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.github.namikon.angermod.AngerMod;
 import com.github.namikon.angermod.auxiliary.MinecraftBlock;
+
 import eu.usrv.yamcore.config.ConfigManager;
 
 /**

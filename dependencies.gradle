@@ -1,6 +1,6 @@
 // Add your dependencies here
 
 dependencies {
-    compile('com.github.GTNewHorizons:Yamcl:0.5.82:dev')
-    compile('com.github.GTNewHorizons:Baubles:1.0.1.14:dev')
+    api('com.github.GTNewHorizons:Yamcl:0.5.86:dev')
+    api('com.github.GTNewHorizons:Baubles:1.0.3:dev')
 }
