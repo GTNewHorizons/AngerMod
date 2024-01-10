@@ -1,6 +1,8 @@
 # AngerMod
 ![](src/main/resources/assets/angermod/angermod.png)
 
+Define blocks/events where friendly/neutral mobs shall become angry, or explode.
+
 [![Build Status](http://jenkins.usrv.eu:8080/buildStatus/icon?job=AngerMod)](http://jenkins.usrv.eu:8080/job/AngerMod/)
 
 # Copyright / License / Modpack usage
