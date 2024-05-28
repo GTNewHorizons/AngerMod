@@ -11,7 +11,7 @@ import eu.usrv.yamcore.config.ConfigManager;
 
 /**
  * Specific configuration for >this< mod
- * 
+ *
  * @author Namikon
  *
  */
@@ -56,11 +56,10 @@ public class AngerModConfig extends ConfigManager {
      */
     @Override
     protected void PreInit() {
-        BlacklistedBlocks = new ArrayList<MinecraftBlock>();
+        BlacklistedBlocks = new ArrayList<>();
 
         _mDefaultBlacklistedEndBlocks = new String[] { "gregtech:gt.blockores" };
-
-        _mDefaultBlacklistedNetherBlocks = new String[] { "gregtech:gt.blockores", };
+        _mDefaultBlacklistedNetherBlocks = new String[] { "gregtech:gt.blockores" };
 
         EndermanAggrorange = 16;
         PigmenAggrorange = 16;
@@ -204,7 +203,7 @@ public class AngerModConfig extends ConfigManager {
     /**
      * Go ahead and parse the given list of strings to actual instances of MinecraftBlock classes with bound dimension
      * ID
-     * 
+     *
      * @param pBlockNames
      * @param pDimension
      */
