@@ -1,7 +1,5 @@
 package com.github.namikon.angermod.events;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
