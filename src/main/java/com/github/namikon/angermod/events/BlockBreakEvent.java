@@ -77,17 +77,6 @@ public class BlockBreakEvent {
         }
     }
 
-    private static Method becomeAngryAtMethod;
-
-    static {
-        try {
-            becomeAngryAtMethod = EntityPigZombie.class.getDeclaredMethod("becomeAngryAt", Entity.class);
-            becomeAngryAtMethod.setAccessible(true);
-        } catch (NoSuchMethodException | SecurityException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void aggroZombiePigmenInRange(EntityPlayer player, int range) {
         int x = (int) player.posX;
         int y = (int) player.posY;
@@ -102,15 +91,7 @@ public class BlockBreakEvent {
         for (Entity entity : nearbyEntities) {
             if (entity instanceof EntityPigZombie zombiePigman) {
                 zombiePigman.setTarget(player);
-
-                // Invoke the cached private method
-                try {
-                    if (becomeAngryAtMethod != null) {
-                        becomeAngryAtMethod.invoke(zombiePigman, player);
-                    }
-                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+                zombiePigman.worldObj.playSoundAtEntity(zombiePigman, "mob.zombiepig.zpighurt", 1.0F, 1.0F);
             }
         }
     }
