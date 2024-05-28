@@ -9,6 +9,7 @@ import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 import com.github.namikon.angermod.AngerMod;
@@ -34,6 +35,9 @@ public class BlockBreakEvent {
 
     @SubscribeEvent
     public void onBreakBlock(BreakEvent pEvent) {
+
+        if (pEvent.getPlayer() instanceof FakePlayer) return;
+
         try {
             for (MinecraftBlock tBlock : _mConfig.BlacklistedBlocks) {
                 if (tBlock.isEqualTo(pEvent)) {
