@@ -13,9 +13,6 @@
 		],
 		"credits": "",
 		"logoFile": "assets/angermod/angermod.png",
-		"screenshots": [],
-		"requiredMods": ["Forge@[10.13.4.1614,)", "Baubles@[1.0.1.10,)", "YAMCore@[0.3,)"],
-		"dependencies": ["Baubles@[1.0.1.10,)", "YAMCore@[0.3,)"],
-		"useDependencyInformation": true
+		"screenshots": []
 	}]
 }
