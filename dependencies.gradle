@@ -2,5 +2,5 @@
 
 dependencies {
     api('com.github.GTNewHorizons:Yamcl:0.6.0:dev')
-    api('com.github.GTNewHorizons:Baubles:1.0.4:dev')
+    api('com.github.GTNewHorizons:Baubles-Expanded:2.1.7-GTNH:dev')
 }
