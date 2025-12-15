@@ -2,7 +2,7 @@ package com.github.namikon.angermod;
 
 import net.minecraftforge.common.MinecraftForge;
 
-import com.github.namikon.angermod.auxiliary.Reference;
+import com.github.namikon.angermod.auxiliary.Tags;
 import com.github.namikon.angermod.command.AngerProtectionCommand;
 import com.github.namikon.angermod.config.AngerModConfig;
 import com.github.namikon.angermod.events.BlockBreakEvent;
@@ -24,13 +24,13 @@ import eu.usrv.yamcore.auxiliary.LogHelper;
  *
  */
 @Mod(
-        modid = Reference.MODID,
-        name = Reference.NAME,
-        version = Reference.VERSION,
+        modid = AngerMod.MODID,
+        name = "AngerMod. Makes your Mobs angry!",
+        version = Tags.VERSION,
         dependencies = "required-after:Forge@[10.13.4.1614,);required-after:Baubles@[1.0.1.10,);"
                 + "required-after:YAMCore@[0.3,);")
 public class AngerMod {
-
+    public static final String MODID = "angermod";
     public static AngerModConfig _cfgManager = null;
     public static LogHelper Logger = new LogHelper("AngerMod");
 
@@ -47,13 +47,9 @@ public class AngerMod {
         try {
             _cfgManager = new AngerModConfig(
                     event.getModConfigurationDirectory(),
-                    Reference.COLLECTIONNAME,
-                    Reference.MODID);
+                "GTNewHorizons",
+                    AngerMod.MODID);
             if (!_cfgManager.LoadConfig()) ModInitSuccessful = false;
-            /*
-             * _mPersistedConfig = new PersistedDataBase(event.getModConfigurationDirectory(), "AngerStorage.ser",
-             * Reference.COLLECTIONNAME); if (!_mPersistedConfig.Load()) ModInitSuccessful = false;
-             */
 
         } catch (Exception e) {
             Logger.error("Yeeks, I can't load my configuration. What did you do??");
@@ -91,7 +87,7 @@ public class AngerMod {
         } else Logger.warn(
                 String.format(
                         "%s will NOT do anything as there where errors due the preInit event. Check the logfile!",
-                        Reference.MODID));
+                        AngerMod.MODID));
     }
 
     @EventHandler
@@ -101,7 +97,7 @@ public class AngerMod {
 
     /**
      * Do some stuff once the server starts
-     * 
+     *
      * @param pEvent
      */
     @EventHandler

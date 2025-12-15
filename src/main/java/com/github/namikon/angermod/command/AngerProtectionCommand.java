@@ -19,16 +19,16 @@ import eu.usrv.yamcore.auxiliary.WorldHelper;
 
 /**
  * Angerprotection command. Enable ops to give/remove protection
- * 
+ *
  * @author Namikon
  *
  */
 public class AngerProtectionCommand implements ICommand {
 
-    private List aliases;
+    private final List<String> aliases;
 
     public AngerProtectionCommand() {
-        this.aliases = new ArrayList();
+        this.aliases = new ArrayList<>();
         this.aliases.add("angerprotection");
     }
 
@@ -43,7 +43,7 @@ public class AngerProtectionCommand implements ICommand {
     }
 
     @Override
-    public List getCommandAliases() {
+    public List<String> getCommandAliases() {
         return this.aliases;
     }
 
@@ -98,7 +98,7 @@ public class AngerProtectionCommand implements ICommand {
     }
 
     @Override
-    public List addTabCompletionOptions(ICommandSender p_71516_1_, String[] p_71516_2_) {
+    public List<String> addTabCompletionOptions(ICommandSender p_71516_1_, String[] p_71516_2_) {
         return null;
     }
 

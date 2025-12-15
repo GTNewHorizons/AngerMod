@@ -26,13 +26,13 @@ import eu.usrv.yamcore.auxiliary.PlayerHelper;
 
 /**
  * Class for handling the spawn protection. Give/set/watch events,... probably better to split that up later on...
- * 
+ *
  * @author Namikon
  *
  */
 public class PlayerSpawnProtection {
 
-    private class PlayerCoords {
+    private static class PlayerCoords {
 
         private LogHelper _mLog = AngerMod.Logger;
         public double _mX;
@@ -171,7 +171,7 @@ public class PlayerSpawnProtection {
 
     /**
      * Load players bauble slots as UIDs
-     * 
+     *
      * @param tEP
      * @return
      */
@@ -200,10 +200,10 @@ public class PlayerSpawnProtection {
     /**
      * Check if player has some special items in his/her inventory where AngerMod should just do nothing, since they're
      * doing stuff with "capabilities.disableDamage"
-     * 
+     *
      * This is a temp solution for now; Later on, it might be better (if it has performance issues), to create a
      * buffered UID list for that so we don't query the players inventory all the time
-     * 
+     *
      * @return
      */
     private boolean hasWhitelistedItems(EntityPlayer tEP) {
@@ -229,7 +229,7 @@ public class PlayerSpawnProtection {
     // ---------------------------------------------------------------------------------
     /**
      * Watch player for any interaction
-     * 
+     *
      * @param pEvent
      */
     @SubscribeEvent
@@ -270,7 +270,7 @@ public class PlayerSpawnProtection {
 
     /**
      * Protect the player from any damage or becoming a target to hostile mobs as they spawn
-     * 
+     *
      * @param event
      */
     @SubscribeEvent
@@ -311,7 +311,7 @@ public class PlayerSpawnProtection {
 
     /**
      * Remove player-protection as soon as the player starts to hit an entity
-     * 
+     *
      * @param event
      */
     @SubscribeEvent
@@ -337,7 +337,7 @@ public class PlayerSpawnProtection {
 
     /**
      * Fired once the player changes dimensions
-     * 
+     *
      * @param pEvent
      */
     @SubscribeEvent

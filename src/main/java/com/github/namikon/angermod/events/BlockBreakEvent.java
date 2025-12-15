@@ -53,10 +53,7 @@ public class BlockBreakEvent {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static void aggroEndermenInRange(EntityPlayer player, int range) {
-        List nearbyEntities;
-
         int x = (int) player.posX;
         int y = (int) player.posY;
         int z = (int) player.posZ;
@@ -65,13 +62,11 @@ public class BlockBreakEvent {
         AxisAlignedBB tBoundingBox = AxisAlignedBB
                 .getBoundingBox(x - range, y - range, z - range, x + range, y + range, z + range);
 
-        nearbyEntities = player.worldObj.getEntitiesWithinAABB(EntityEnderman.class, tBoundingBox);
+        List<? extends EntityEnderman> nearbyEntities = player.worldObj.getEntitiesWithinAABB(EntityEnderman.class, tBoundingBox);
 
-        for (Entity entity : (List<Entity>) nearbyEntities) {
-            if (entity instanceof EntityEnderman enderman) {
-                enderman.setTarget(player);
-                enderman.setScreaming(true);
-            }
+        for (var enderman : nearbyEntities) {
+            enderman.setTarget(player);
+            enderman.setScreaming(true);
         }
     }
 
@@ -84,13 +79,11 @@ public class BlockBreakEvent {
         AxisAlignedBB boundingBox = AxisAlignedBB
                 .getBoundingBox(x - range, y - range, z - range, x + range, y + range, z + range);
 
-        List<Entity> nearbyEntities = player.worldObj.getEntitiesWithinAABB(EntityPigZombie.class, boundingBox);
+        List<? extends EntityPigZombie> pigmen = player.worldObj.getEntitiesWithinAABB(EntityPigZombie.class, boundingBox);
 
-        for (Entity entity : nearbyEntities) {
-            if (entity instanceof EntityPigZombie zombiePigman) {
-                zombiePigman.setTarget(player);
-                zombiePigman.worldObj.playSoundAtEntity(zombiePigman, "mob.zombiepig.zpighurt", 1.0F, 1.0F);
-            }
+        for (var zombiePigman : pigmen) {
+            zombiePigman.setTarget(player);
+            zombiePigman.worldObj.playSoundAtEntity(zombiePigman, "mob.zombiepig.zpighurt", 1.0F, 1.0F);
         }
     }
 
