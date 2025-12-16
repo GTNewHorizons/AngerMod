@@ -14,7 +14,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
 import com.github.namikon.angermod.AngerMod;
-import com.github.namikon.angermod.config.AngerModConfig;
+import com.github.namikon.angermod.config.SpawnProtectionConfig;
 
 import baubles.api.BaublesApi;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -44,9 +44,8 @@ public class PlayerSpawnProtection {
         }
 
         public boolean isExpired(EntityPlayer player) {
-            double maxDistSq = AngerModConfig.SpawnProtectionMoveTolerance
-                    * AngerModConfig.SpawnProtectionMoveTolerance;
-            int maxDuration = AngerModConfig.SpawnProtectionTimeout * 20;
+            double maxDistSq = SpawnProtectionConfig.moveTolerance * SpawnProtectionConfig.moveTolerance;
+            int maxDuration = SpawnProtectionConfig.maxDuration * 20;
 
             if (player.getDistanceSq(x, y, z) > maxDistSq) {
                 AngerMod.Logger.debug("Protection voided because of distance");
@@ -110,7 +109,7 @@ public class PlayerSpawnProtection {
             ItemStack stack = baubles.getStackInSlot(i);
             if (stack == null) continue;
 
-            if (AngerModConfig.WhitelistedProtectionBaubles.contains(stack.getItem(), stack.getItemDamage())) {
+            if (SpawnProtectionConfig.WhitelistedProtectionBaubles.contains(stack.getItem(), stack.getItemDamage())) {
                 return true;
             }
         }

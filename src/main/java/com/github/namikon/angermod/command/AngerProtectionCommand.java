@@ -14,6 +14,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentTranslation;
 
 import com.github.namikon.angermod.AngerMod;
+import com.github.namikon.angermod.config.SpawnProtectionConfig;
 
 /**
  * Angerprotection command. Enable ops to give/remove protection
@@ -43,7 +44,7 @@ public class AngerProtectionCommand extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
-        if (AngerMod.SpawnProtectionModule == null) {
+        if (!SpawnProtectionConfig.enabled) {
             throw new CommandException("angermod.commands.angerprotection.disabled");
         }
 
@@ -68,14 +69,14 @@ public class AngerProtectionCommand extends CommandBase {
         if (action.equalsIgnoreCase("give")) {
             int count = 0;
             for (var player : players) {
-                if (AngerMod.SpawnProtectionModule.protectPlayer(player)) count++;
+                if (AngerMod.spawnProtectionEventHandler.protectPlayer(player)) count++;
             }
 
             sender.addChatMessage(new ChatComponentTranslation("angermod.commands.angerprotection.given", count));
         } else if (action.equalsIgnoreCase("remove")) {
             int count = 0;
             for (var player : players) {
-                if (AngerMod.SpawnProtectionModule.unprotectPlayer(player)) count++;
+                if (AngerMod.spawnProtectionEventHandler.unprotectPlayer(player)) count++;
             }
 
             sender.addChatMessage(new ChatComponentTranslation("angermod.commands.angerprotection.removed", count));

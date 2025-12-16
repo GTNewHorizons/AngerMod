@@ -9,7 +9,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
-import com.github.namikon.angermod.config.AngerModConfig;
+import com.github.namikon.angermod.config.BlockBreakAngerConfig;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
@@ -29,12 +29,12 @@ public class BlockBreakEvent {
         var dimension = event.getPlayer().dimension;
 
         if (dimension == -1) {
-            if (AngerModConfig.BlacklistedNetherBlocks.contains(event.block, event.blockMetadata)) {
-                aggroZombiePigmenInRange(event.getPlayer(), AngerModConfig.PigmenAggrorange);
+            if (BlockBreakAngerConfig.netherBlacklistSet.contains(event.block, event.blockMetadata)) {
+                aggroZombiePigmenInRange(event.getPlayer(), BlockBreakAngerConfig.pigmanAggroRange);
             }
         } else if (dimension == 1) {
-            if (AngerModConfig.BlacklistedEndBlocks.contains(event.block, event.blockMetadata)) {
-                aggroEndermenInRange(event.getPlayer(), AngerModConfig.EndermanAggrorange);
+            if (BlockBreakAngerConfig.endBlacklistSet.contains(event.block, event.blockMetadata)) {
+                aggroEndermenInRange(event.getPlayer(), BlockBreakAngerConfig.endermanAggroRange);
             }
         }
     }

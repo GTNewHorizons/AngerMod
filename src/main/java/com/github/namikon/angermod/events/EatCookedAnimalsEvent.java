@@ -10,25 +10,23 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 
-import com.github.namikon.angermod.AngerMod;
-import com.github.namikon.angermod.config.AngerModConfig;
+import com.github.namikon.angermod.config.FriendlyAnimalRevengeConfig;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class EatCookedAnimalsEvent {
 
     @SubscribeEvent
-    public void onPlayerUsesItem(PlayerUseItemEvent.Start event) {
+    public void onPlayerFinishedUsingItem(PlayerUseItemEvent.Finish event) {
         EntityPlayer player = event.entityPlayer;
         if (player == null) return;
 
         String itemName = event.item.getUnlocalizedName();
-        AngerMod.Logger.debug(String.format("Using item %s", itemName));
 
-        tryTriggerAnimals(AngerModConfig.PigFoodTrigger, itemName, player, EntityPig.class);
-        tryTriggerAnimals(AngerModConfig.CowFoodTrigger, itemName, player, EntityCow.class);
-        tryTriggerAnimals(AngerModConfig.ChickenFoodTrigger, itemName, player, EntityChicken.class);
-        tryTriggerAnimals(AngerModConfig.SheepFoodTrigger, itemName, player, EntitySheep.class);
+        tryTriggerAnimals(FriendlyAnimalRevengeConfig.pigFoodTrigger, itemName, player, EntityPig.class);
+        tryTriggerAnimals(FriendlyAnimalRevengeConfig.cowFoodTrigger, itemName, player, EntityCow.class);
+        tryTriggerAnimals(FriendlyAnimalRevengeConfig.chickenFoodTrigger, itemName, player, EntityChicken.class);
+        tryTriggerAnimals(FriendlyAnimalRevengeConfig.sheepFoodTrigger, itemName, player, EntitySheep.class);
     }
 
     private static void tryTriggerAnimals(String[] triggers, String item, EntityPlayer player,
@@ -42,7 +40,7 @@ public class EatCookedAnimalsEvent {
     }
 
     private static void damageEntitiesInRange(EntityPlayer player, Class<? extends Entity> filter) {
-        int range = AngerModConfig.FriendlyMobRevengeRadius;
+        int range = FriendlyAnimalRevengeConfig.revengeRadius;
         AxisAlignedBB box = AxisAlignedBB.getBoundingBox(
                 player.posX - range,
                 player.posY - range,
