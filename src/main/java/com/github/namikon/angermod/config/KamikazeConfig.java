@@ -6,7 +6,7 @@ import com.gtnewhorizon.gtnhlib.config.Config;
 @Config(modid = AngerMod.MODID, category = "kamikaze")
 @Config.LangKey("angermod.config.kamikaze")
 @Config.Comment("Killed mobs have a chance to explode.")
-public class KamikazeConfig {
+public final class KamikazeConfig {
 
     @Config.Comment("Killed passive mobs have a chance to explode unless killed with the right tool.")
     @Config.DefaultBoolean(false)

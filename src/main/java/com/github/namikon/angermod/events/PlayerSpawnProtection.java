@@ -27,7 +27,7 @@ import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
  * @author Namikon
  *
  */
-public class PlayerSpawnProtection {
+public final class PlayerSpawnProtection {
 
     private static class ProtectionData {
 

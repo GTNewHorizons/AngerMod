@@ -6,7 +6,7 @@ import com.gtnewhorizon.gtnhlib.config.Config;
 @Config(modid = AngerMod.MODID, category = "friendly-animal-revenge")
 @Config.LangKey("angermod.config.friendly-animal-revenge")
 @Config.Comment("Eating animal-based food angers those animals.")
-public class FriendlyAnimalRevengeConfig {
+public final class FriendlyAnimalRevengeConfig {
 
     @Config.Comment("If set to true, sheep will attack/flee if you eat mutton, pigs if you eat pork,... The attack/flee is based on additional mods you have installed.")
     @Config.DefaultBoolean(false)

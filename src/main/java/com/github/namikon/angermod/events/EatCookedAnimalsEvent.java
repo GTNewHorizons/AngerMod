@@ -14,7 +14,7 @@ import com.github.namikon.angermod.config.FriendlyAnimalRevengeConfig;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-public class EatCookedAnimalsEvent {
+public final class EatCookedAnimalsEvent {
 
     @SubscribeEvent
     public void onPlayerFinishedUsingItem(PlayerUseItemEvent.Finish event) {

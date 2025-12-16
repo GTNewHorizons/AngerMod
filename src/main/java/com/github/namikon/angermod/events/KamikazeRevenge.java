@@ -16,7 +16,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
  * @author Namikon
  *
  */
-public class KamikazeRevenge {
+public final class KamikazeRevenge {
 
     @SubscribeEvent
     public void onEntityDied(LivingDeathEvent event) {

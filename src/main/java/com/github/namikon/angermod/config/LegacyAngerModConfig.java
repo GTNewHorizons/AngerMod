@@ -12,7 +12,7 @@ import com.gtnewhorizon.gtnhlib.config.Config;
  *
  */
 @Config(modid = AngerMod.MODID)
-public class LegacyAngerModConfig {
+public final class LegacyAngerModConfig {
 
     public static void loadLegacyConfig(Configuration legacyConfig) {
         BlockBreakAngerConfig.endBlacklist = legacyConfig.getStringList(

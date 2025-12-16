@@ -20,7 +20,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
  * @author Namikon
  *
  */
-public class BlockBreakEvent {
+public final class BlockBreakEvent {
 
     @SubscribeEvent
     public void onBreakBlock(BreakEvent event) {
