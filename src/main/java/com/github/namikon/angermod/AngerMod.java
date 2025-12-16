@@ -91,6 +91,7 @@ public class AngerMod {
 
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+        if (!AngerMod.MODID.equals(event.modID)) return;
         applyConfigs();
     }
 
@@ -98,8 +99,10 @@ public class AngerMod {
         if (BlockBreakAngerConfig.enabled) {
             LOGGER.info("BlockBreak module is enabled. Some mobs will get very angry...");
             BlockBreakAngerConfig.reloadConfigs();
-            blockBreakEventHandler = new BlockBreakEvent();
-            MinecraftForge.EVENT_BUS.register(blockBreakEventHandler);
+            if (blockBreakEventHandler == null) {
+                blockBreakEventHandler = new BlockBreakEvent();
+                MinecraftForge.EVENT_BUS.register(blockBreakEventHandler);
+            }
         } else if (blockBreakEventHandler != null) {
             MinecraftForge.EVENT_BUS.unregister(blockBreakEventHandler);
             blockBreakEventHandler = null;
@@ -108,9 +111,11 @@ public class AngerMod {
         if (SpawnProtectionConfig.enabled) {
             LOGGER.info("Spawn-Protection is enabled. Players will be protected until they attack");
             SpawnProtectionConfig.reloadConfigs();
-            spawnProtectionEventHandler = new PlayerSpawnProtection();
-            MinecraftForge.EVENT_BUS.register(spawnProtectionEventHandler);
-            FMLCommonHandler.instance().bus().register(spawnProtectionEventHandler);
+            if (spawnProtectionEventHandler == null) {
+                spawnProtectionEventHandler = new PlayerSpawnProtection();
+                MinecraftForge.EVENT_BUS.register(spawnProtectionEventHandler);
+                FMLCommonHandler.instance().bus().register(spawnProtectionEventHandler);
+            }
         } else if (spawnProtectionEventHandler != null) {
             MinecraftForge.EVENT_BUS.unregister(spawnProtectionEventHandler);
             FMLCommonHandler.instance().bus().unregister(spawnProtectionEventHandler);
@@ -119,8 +124,10 @@ public class AngerMod {
 
         if (FriendlyAnimalRevengeConfig.enabled) {
             LOGGER.info("FriendlyMobRevenge is enabled. Be careful what you eat...");
-            eatCookedAnimalsEventHandler = new EatCookedAnimalsEvent();
-            MinecraftForge.EVENT_BUS.register(eatCookedAnimalsEventHandler);
+            if (eatCookedAnimalsEventHandler == null) {
+                eatCookedAnimalsEventHandler = new EatCookedAnimalsEvent();
+                MinecraftForge.EVENT_BUS.register(eatCookedAnimalsEventHandler);
+            }
         } else if (eatCookedAnimalsEventHandler != null) {
             MinecraftForge.EVENT_BUS.unregister(eatCookedAnimalsEventHandler);
             eatCookedAnimalsEventHandler = null;
@@ -128,8 +135,10 @@ public class AngerMod {
 
         if (KamikazeConfig.enabled) {
             LOGGER.info("KamikazeMobRevenge is enabled. Have fun :P");
-            kamikazeRevengeEventHandler = new KamikazeRevenge();
-            MinecraftForge.EVENT_BUS.register(kamikazeRevengeEventHandler);
+            if (kamikazeRevengeEventHandler == null) {
+                kamikazeRevengeEventHandler = new KamikazeRevenge();
+                MinecraftForge.EVENT_BUS.register(kamikazeRevengeEventHandler);
+            }
         } else if (kamikazeRevengeEventHandler != null) {
             MinecraftForge.EVENT_BUS.unregister(kamikazeRevengeEventHandler);
             kamikazeRevengeEventHandler = null;
