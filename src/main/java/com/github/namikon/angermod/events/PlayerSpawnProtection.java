@@ -63,6 +63,12 @@ public class PlayerSpawnProtection {
 
     private final HashMap<UUID, ProtectionData> protectedPlayers = new HashMap<>();
 
+    /**
+     * Give the player a bubble of protection or reset the timer on their current bubble if it would be safe to do so.
+     *
+     * @param player The player to protect
+     * @return Whether the bubble was safely applied to the player.
+     */
     public boolean protectPlayer(EntityPlayer player) {
         if (isInvalidPlayer(player)) return false;
 
@@ -76,6 +82,13 @@ public class PlayerSpawnProtection {
         return true;
     }
 
+    /**
+     * Remove the bubble of protection from a player, if it would be safe to do so.
+     * Will remove the player's bubble data regardless of safety
+     *
+     * @param player The player to unprotect
+     * @return Whether the player's bubble was successfully removed.
+     */
     public boolean unprotectPlayer(EntityPlayer player) {
         if (protectedPlayers.remove(player.getUniqueID()) == null) return false;
         if (isInvalidPlayer(player)) return false;
@@ -88,6 +101,12 @@ public class PlayerSpawnProtection {
         return true;
     }
 
+    /***
+     * Check if we can safely alter the player's invulnerability setting.
+     *
+     * @param player The player to check
+     * @return True if it would be unsafe to alter their `capabilities.disableDamage`
+     */
     public static boolean isInvalidPlayer(EntityPlayer player) {
         return player.capabilities.isCreativeMode || hasWhitelistedItems(player);
     }
@@ -96,10 +115,8 @@ public class PlayerSpawnProtection {
      * Check if player has some special items in his/her inventory where AngerMod should just do nothing, since they're
      * doing stuff with "capabilities.disableDamage"
      *
-     * This is a temp solution for now; Later on, it might be better (if it has performance issues), to create a
-     * buffered UID list for that so we don't query the players inventory all the time
-     *
-     * @return
+     * @param player The player to check for baubles
+     * @return True if the player has baubles that would affect their `capabilities.disableDamage`.
      */
     private static boolean hasWhitelistedItems(EntityPlayer player) {
         var baubles = BaublesApi.getBaubles(player);

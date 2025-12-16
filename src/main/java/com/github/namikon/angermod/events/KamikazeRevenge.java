@@ -27,8 +27,11 @@ public class KamikazeRevenge {
         if (heldItem != null) {
             String itemName = heldItem.getUnlocalizedName().toLowerCase();
             for (String s : KamikazeConfig.butcherItems) {
-                if (itemName.contains(s.toLowerCase())) return; // Player used defined butcher-item to
-                // slay animal. Trigger no explosion
+                if (itemName.contains(s.toLowerCase())) {
+                    // Player used defined butcher-item to
+                    // slay animal. Trigger no explosion
+                    return;
+                }
             }
         }
 
