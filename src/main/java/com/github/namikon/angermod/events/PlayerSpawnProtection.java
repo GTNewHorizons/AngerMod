@@ -83,8 +83,8 @@ public class PlayerSpawnProtection {
     }
 
     /**
-     * Remove the bubble of protection from a player, if it would be safe to do so.
-     * Will remove the player's bubble data regardless of safety
+     * Remove the bubble of protection from a player, if it would be safe to do so. Will remove the player's bubble data
+     * regardless of safety
      *
      * @param player The player to unprotect
      * @return Whether the player's bubble was successfully removed.

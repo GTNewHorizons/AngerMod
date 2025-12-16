@@ -40,7 +40,8 @@ public class SpawnProtectionConfig {
             Item item;
             if (parts.length < 2) {
                 AngerMod.LOGGER.error(
-                        "Item {} in list of protection-affecting items is invalid. Format: [mod-id]:[item-name] or [mod-id]:[item-name]:[meta]", itemString);
+                        "Item {} in list of protection-affecting items is invalid. Format: [mod-id]:[item-name] or [mod-id]:[item-name]:[meta]",
+                        itemString);
                 continue;
             } else {
                 item = GameRegistry.findItem(parts[0], parts[1]);
