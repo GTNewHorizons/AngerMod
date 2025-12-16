@@ -1,36 +1,31 @@
 package com.github.namikon.angermod.command;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.command.ICommand;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.command.PlayerNotFoundException;
+import net.minecraft.command.PlayerSelector;
+import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentTranslation;
 
 import com.github.namikon.angermod.AngerMod;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import eu.usrv.yamcore.auxiliary.PlayerChatHelper;
-import eu.usrv.yamcore.auxiliary.PlayerHelper;
-import eu.usrv.yamcore.auxiliary.WorldHelper;
+import com.github.namikon.angermod.config.SpawnProtectionConfig;
 
 /**
  * Angerprotection command. Enable ops to give/remove protection
- * 
+ *
  * @author Namikon
  *
  */
-public class AngerProtectionCommand implements ICommand {
+public class AngerProtectionCommand extends CommandBase {
 
-    private List aliases;
-
-    public AngerProtectionCommand() {
-        this.aliases = new ArrayList();
-        this.aliases.add("angerprotection");
-    }
+    private static final List<String> aliases = Collections.singletonList("angerprotection");
+    private static final String[] actions = new String[] { "give", "remove" };
 
     @Override
     public String getCommandName() {
@@ -38,72 +33,78 @@ public class AngerProtectionCommand implements ICommand {
     }
 
     @Override
-    public String getCommandUsage(ICommandSender pCommandSender) {
-        return "angerprotection <Player> give/remove";
+    public String getCommandUsage(ICommandSender sender) {
+        return "angermod.commands.angerprotection.usage";
     }
 
     @Override
-    public List getCommandAliases() {
-        return this.aliases;
+    public List<String> getCommandAliases() {
+        return aliases;
     }
 
     @Override
-    public void processCommand(ICommandSender pCommandSender, String[] pArgs) {
-        if (AngerMod.SpawnProtectionModule == null) {
-            PlayerChatHelper.SendError(pCommandSender, "Spawn protection is not enabled");
-            return;
+    public void processCommand(ICommandSender sender, String[] args) {
+        if (!SpawnProtectionConfig.enabled) {
+            throw new CommandException("angermod.commands.angerprotection.disabled");
         }
 
-        if (pArgs.length < 2) {
-            PlayerChatHelper.SendError(pCommandSender, "Invalid arguments");
-            return;
+        if (args.length < 2) {
+            throw new WrongUsageException(this.getCommandUsage(sender));
         }
 
-        String tTargetPlayer = pArgs[0];
-        String tFunction = pArgs[1];
-        EntityPlayer tEP = WorldHelper.FindPlayerByName(tTargetPlayer);
+        String selector = args[0];
+        String action = args[1];
 
-        if (tEP == null) {
-            PlayerChatHelper.SendError(pCommandSender, String.format("Player %s not found", tTargetPlayer));
-            return;
+        EntityPlayerMP[] players = PlayerSelector.matchPlayers(sender, selector);
+        if (players == null) {
+            EntityPlayerMP player = MinecraftServer.getServer().getConfigurationManager().func_152612_a(selector);
+
+            if (player == null) {
+                throw new PlayerNotFoundException();
+            } else {
+                players = new EntityPlayerMP[] { player };
+            }
         }
 
-        if (tFunction.equalsIgnoreCase("give")) {
-            PlayerHelper.GiveProtection(tEP);
-            AngerMod.SpawnProtectionModule.UpdateOrInitLastCoords(tEP); // Update protection tracker so it doesn't run
-                                                                        // out instantly
-            PlayerChatHelper.SendInfo(pCommandSender, "Protection given");
-        } else if (tFunction.equalsIgnoreCase("remove")) {
-            PlayerHelper.RemoveProtection(tEP);
-            PlayerChatHelper.SendInfo(pCommandSender, "Protection removed");
-        } else PlayerChatHelper.SendError(pCommandSender, "Must specify either give or remove");
-    }
+        if (action.equalsIgnoreCase("give")) {
+            int count = 0;
+            for (var player : players) {
+                if (AngerMod.spawnProtectionEventHandler.protectPlayer(player)) count++;
+            }
 
-    @Override
-    public boolean canCommandSenderUseCommand(ICommandSender pCommandSender) {
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER
-                && !FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer())
-            return true;
+            sender.addChatMessage(new ChatComponentTranslation("angermod.commands.angerprotection.given", count));
+        } else if (action.equalsIgnoreCase("remove")) {
+            int count = 0;
+            for (var player : players) {
+                if (AngerMod.spawnProtectionEventHandler.unprotectPlayer(player)) count++;
+            }
 
-        if (pCommandSender instanceof EntityPlayerMP) {
-            EntityPlayerMP tEP = (EntityPlayerMP) pCommandSender;
-            return MinecraftServer.getServer().getConfigurationManager().func_152596_g(tEP.getGameProfile());
+            sender.addChatMessage(new ChatComponentTranslation("angermod.commands.angerprotection.removed", count));
+        } else {
+            throw new CommandException("angermod.commands.angerprotection.wrong_action");
         }
-        return false;
     }
 
     @Override
-    public int compareTo(Object o) {
-        return 0;
+    public int getRequiredPermissionLevel() {
+        return 2;
     }
 
     @Override
-    public List addTabCompletionOptions(ICommandSender p_71516_1_, String[] p_71516_2_) {
-        return null;
+    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args) {
+        if (args.length == 1) {
+            return getListOfStringsMatchingLastWord(
+                    args,
+                    MinecraftServer.getServer().getConfigurationManager().getAllUsernames());
+        } else if (args.length == 2) {
+            return getListOfStringsMatchingLastWord(args, actions);
+        } else {
+            return null;
+        }
     }
 
     @Override
-    public boolean isUsernameIndex(String[] p_82358_1_, int p_82358_2_) {
-        return false;
+    public boolean isUsernameIndex(String[] args, int index) {
+        return index == 0;
     }
 }
