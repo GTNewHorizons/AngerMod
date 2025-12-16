@@ -39,7 +39,7 @@ public class SpawnProtectionConfig {
 
             Item item;
             if (parts.length < 2) {
-                AngerMod.Logger.error(
+                AngerMod.LOGGER.error(
                         "Item {} in list of protection-affecting items is invalid. Format: [mod-id]:[item-name] or [mod-id]:[item-name]:[meta]");
                 continue;
             } else {
@@ -47,19 +47,19 @@ public class SpawnProtectionConfig {
             }
 
             if (item == null) {
-                AngerMod.Logger.warn("Item {} in list of protection-affecting items could not be found.", itemString);
+                AngerMod.LOGGER.warn("Item {} in list of protection-affecting items could not be found.", itemString);
                 continue;
             }
 
             if (parts.length >= 3) {
-                if (parts.length >= 4) AngerMod.Logger.error(
+                if (parts.length >= 4) AngerMod.LOGGER.error(
                         "Item {} in list of protection-affecting items has too many parts, ignoring extra parts.",
                         itemString);
 
                 try {
                     WhitelistedProtectionBaubles.add(item, Integer.parseInt(parts[2]));
                 } catch (NumberFormatException e) {
-                    AngerMod.Logger.error(
+                    AngerMod.LOGGER.error(
                             "Could not parse metadata value of item {} in list of protection-affecting items",
                             itemString);
                 }

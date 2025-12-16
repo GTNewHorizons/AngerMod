@@ -48,12 +48,12 @@ public class PlayerSpawnProtection {
             int maxDuration = SpawnProtectionConfig.maxDuration * 20;
 
             if (player.getDistanceSq(x, y, z) > maxDistSq) {
-                AngerMod.Logger.debug("Protection voided because of distance");
+                AngerMod.LOGGER.debug("Protection voided because of distance");
                 return true;
             }
 
             if ((creationTime + maxDuration) < player.worldObj.getTotalWorldTime()) {
-                AngerMod.Logger.debug("Protection voided because of timeout");
+                AngerMod.LOGGER.debug("Protection voided because of timeout");
                 return true;
             }
 

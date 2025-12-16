@@ -59,7 +59,7 @@ public class BlockBreakAngerConfig {
         String[] blockInfo = blockDataString.split(":");
 
         if (blockInfo.length < 2) {
-            AngerMod.Logger.error(
+            AngerMod.LOGGER.error(
                     "BlockName {} in config for {} is invalid. Make sure you use full [domain]:[blockname] notation!",
                     blockDataString,
                     dimension);
@@ -70,7 +70,7 @@ public class BlockBreakAngerConfig {
 
         if (blockInfo.length >= 3) {
             // Meta-aware entry
-            if (blockInfo.length >= 4) AngerMod.Logger.error(
+            if (blockInfo.length >= 4) AngerMod.LOGGER.error(
                     "BlockName {} in config for {} has too many parts. Extra parts have been ignored.",
                     blockDataString,
                     dimension);
@@ -78,7 +78,7 @@ public class BlockBreakAngerConfig {
             try {
                 blockSet.add(block, Integer.parseInt(blockInfo[2]));
             } catch (NumberFormatException e) {
-                AngerMod.Logger.error(
+                AngerMod.LOGGER.error(
                         "BlockName {} in config for {} has unparseable metadata. The metadata must be a number.",
                         blockDataString,
                         dimension);
