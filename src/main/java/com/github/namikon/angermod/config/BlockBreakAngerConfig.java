@@ -9,6 +9,8 @@ import com.gtnewhorizon.gtnhlib.config.Config;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 @Config(modid = AngerMod.MODID, category = "block-break-anger")
+@Config.LangKey("angermod.config.block-break-anger")
+@Config.Comment("Breaking blocks in the Nether or End angers the resident mobs.")
 public class BlockBreakAngerConfig {
 
     @Config.Ignore

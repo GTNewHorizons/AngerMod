@@ -75,6 +75,8 @@ public class AngerMod {
                         "Unable to delete legacy config settings. Please delete the file in config/GTNewHorizons/angermod.cfg to stop the new config file from being overwritten on load.");
             }
         }
+
+        FMLCommonHandler.instance().bus().register(this);
     }
 
     @Mod.EventHandler

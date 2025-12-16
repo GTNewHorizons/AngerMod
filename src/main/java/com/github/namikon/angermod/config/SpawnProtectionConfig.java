@@ -9,6 +9,8 @@ import com.gtnewhorizon.gtnhlib.config.Config;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 @Config(modid = AngerMod.MODID, category = "spawn-protection")
+@Config.LangKey("angermod.config.spawn-protection")
+@Config.Comment("Players cannot be damaged immediately after respawning or crossing dimensions.")
 public class SpawnProtectionConfig {
 
     @Config.Ignore
