@@ -2,6 +2,9 @@ package com.github.namikon.angermod;
 
 import net.minecraftforge.common.MinecraftForge;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.namikon.angermod.auxiliary.Tags;
 import com.github.namikon.angermod.command.AngerProtectionCommand;
 import com.github.namikon.angermod.config.AngerModConfig;
@@ -14,10 +17,8 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import eu.usrv.yamcore.auxiliary.LogHelper;
 
 /**
  * @author Namikon
@@ -30,9 +31,10 @@ import eu.usrv.yamcore.auxiliary.LogHelper;
         dependencies = "required-after:Forge@[10.13.4.1614,);required-after:Baubles@[1.0.1.10,);"
                 + "required-after:YAMCore@[0.3,);")
 public class AngerMod {
+
     public static final String MODID = "angermod";
     public static AngerModConfig _cfgManager = null;
-    public static LogHelper Logger = new LogHelper("AngerMod");
+    public static Logger Logger = LogManager.getLogger("AngerMod");
 
     public static PlayerSpawnProtection SpawnProtectionModule = null;
     public static BlockBreakEvent BlockTakeAggroModule = null;
@@ -40,59 +42,43 @@ public class AngerMod {
     public static KamikazeRevenge KamikazeRevengeModule = null;
 
     public static boolean ModInitSuccessful = true;
-    // private static IPersistedDataBase _mPersistedConfig = null;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        try {
-            _cfgManager = new AngerModConfig(
-                    event.getModConfigurationDirectory(),
-                "GTNewHorizons",
-                    AngerMod.MODID);
-            if (!_cfgManager.LoadConfig()) ModInitSuccessful = false;
-
-        } catch (Exception e) {
-            Logger.error("Yeeks, I can't load my configuration. What did you do??");
-            Logger.DumpStack(e);
-        }
+        _cfgManager = new AngerModConfig(event.getModConfigurationDirectory(), "GTNewHorizons", AngerMod.MODID);
+        if (!_cfgManager.LoadConfig()) ModInitSuccessful = false;
     }
 
     @EventHandler
     public void Init(FMLInitializationEvent event) {
         if (ModInitSuccessful) {
-            if (_cfgManager.MakeMobsAngryOnBlockBreak) {
+            if (AngerModConfig.MakeMobsAngryOnBlockBreak) {
                 Logger.info("BlockBreak module is enabled. Some mobs will get very angry...");
-                BlockTakeAggroModule = new BlockBreakEvent(_cfgManager);
+                BlockTakeAggroModule = new BlockBreakEvent();
                 MinecraftForge.EVENT_BUS.register(BlockTakeAggroModule);
             }
 
-            if (_cfgManager.PlayerSpawnProtection) {
+            if (AngerModConfig.PlayerSpawnProtection) {
                 Logger.info("Spawn-Protection is enabled. Players will be protected until they attack");
-                SpawnProtectionModule = new PlayerSpawnProtection(_cfgManager/* , _mPersistedConfig */);
+                SpawnProtectionModule = new PlayerSpawnProtection();
                 MinecraftForge.EVENT_BUS.register(SpawnProtectionModule);
                 FMLCommonHandler.instance().bus().register(SpawnProtectionModule);
             }
 
-            if (_cfgManager.FriendlyMobRevenge) {
+            if (AngerModConfig.FriendlyMobRevenge) {
                 Logger.info("FriendlyMobRevenge is enabled. Be careful what you eat...");
                 EatCookedAnimalsModule = new EatCookedAnimalsEvent();
                 MinecraftForge.EVENT_BUS.register(EatCookedAnimalsModule);
             }
 
-            if (_cfgManager.KamikazeMobRevenge) {
+            if (AngerModConfig.KamikazeMobRevenge) {
                 Logger.info("KamikazeMobRevenge is enabled. Have fun :P");
-                KamikazeRevengeModule = new KamikazeRevenge(_cfgManager);
+                KamikazeRevengeModule = new KamikazeRevenge();
                 MinecraftForge.EVENT_BUS.register(KamikazeRevengeModule);
             }
         } else Logger.warn(
-                String.format(
-                        "%s will NOT do anything as there where errors due the preInit event. Check the logfile!",
-                        AngerMod.MODID));
-    }
-
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-
+                "{} will NOT do anything as there where errors due the preInit event. Check the logfile!",
+                AngerMod.MODID);
     }
 
     /**
@@ -102,7 +88,7 @@ public class AngerMod {
      */
     @EventHandler
     public void serverLoad(FMLServerStartingEvent pEvent) {
-        if (_cfgManager.PlayerSpawnProtection) {
+        if (AngerModConfig.PlayerSpawnProtection) {
             pEvent.registerServerCommand(new AngerProtectionCommand());
         }
     }

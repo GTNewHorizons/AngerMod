@@ -2,7 +2,6 @@ package com.github.namikon.angermod.events;
 
 import java.util.List;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,8 +9,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
-import com.github.namikon.angermod.AngerMod;
-import com.github.namikon.angermod.auxiliary.MinecraftBlock;
 import com.github.namikon.angermod.config.AngerModConfig;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -25,31 +22,20 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
  */
 public class BlockBreakEvent {
 
-    private AngerModConfig _mConfig = null;
-
-    public BlockBreakEvent(AngerModConfig pCfgMan) {
-        _mConfig = pCfgMan;
-    }
-
     @SubscribeEvent
-    public void onBreakBlock(BreakEvent pEvent) {
+    public void onBreakBlock(BreakEvent event) {
+        if (event.getPlayer() instanceof FakePlayer) return;
 
-        if (pEvent.getPlayer() instanceof FakePlayer) return;
+        var dimension = event.getPlayer().dimension;
 
-        try {
-            for (MinecraftBlock tBlock : _mConfig.BlacklistedBlocks) {
-                if (tBlock.isEqualTo(pEvent)) {
-                    if (pEvent.getPlayer().dimension == -1) // Nether
-                        aggroZombiePigmenInRange(pEvent.getPlayer(), _mConfig.PigmenAggrorange);
-                    else if (pEvent.getPlayer().dimension == 1) // End
-                        aggroEndermenInRange(pEvent.getPlayer(), _mConfig.EndermanAggrorange);
-                }
+        if (dimension == -1) {
+            if (AngerModConfig.BlacklistedNetherBlocks.contains(event.block, event.blockMetadata)) {
+                aggroZombiePigmenInRange(event.getPlayer(), AngerModConfig.PigmenAggrorange);
             }
-        } catch (Exception e) {
-            AngerMod.Logger.warn(
-                    "BlockBreakEvent.onBreakBlock.Error",
-                    "An error occoured while processing onBreakBlock. Please report");
-            AngerMod.Logger.DumpStack("BlockBreakEvent.onBreakBlock.Stack", e);
+        } else if (dimension == 1) {
+            if (AngerModConfig.BlacklistedEndBlocks.contains(event.block, event.blockMetadata)) {
+                aggroEndermenInRange(event.getPlayer(), AngerModConfig.EndermanAggrorange);
+            }
         }
     }
 
@@ -60,11 +46,12 @@ public class BlockBreakEvent {
 
         // Define the area to check for entities
         AxisAlignedBB tBoundingBox = AxisAlignedBB
-                .getBoundingBox(x - range, y - range, z - range, x + range, y + range, z + range);
+                .getBoundingBox(x - range, y - range, z - range, x + range + 1, y + range + 1, z + range + 1);
 
-        List<? extends EntityEnderman> nearbyEntities = player.worldObj.getEntitiesWithinAABB(EntityEnderman.class, tBoundingBox);
+        List<? extends EntityEnderman> endermen = player.worldObj
+                .getEntitiesWithinAABB(EntityEnderman.class, tBoundingBox);
 
-        for (var enderman : nearbyEntities) {
+        for (var enderman : endermen) {
             enderman.setTarget(player);
             enderman.setScreaming(true);
         }
@@ -77,9 +64,10 @@ public class BlockBreakEvent {
 
         // Define the area to check for entities
         AxisAlignedBB boundingBox = AxisAlignedBB
-                .getBoundingBox(x - range, y - range, z - range, x + range, y + range, z + range);
+                .getBoundingBox(x - range, y - range, z - range, x + range + 1, y + range + 1, z + range + 1);
 
-        List<? extends EntityPigZombie> pigmen = player.worldObj.getEntitiesWithinAABB(EntityPigZombie.class, boundingBox);
+        List<? extends EntityPigZombie> pigmen = player.worldObj
+                .getEntitiesWithinAABB(EntityPigZombie.class, boundingBox);
 
         for (var zombiePigman : pigmen) {
             zombiePigman.setTarget(player);
