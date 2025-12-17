@@ -2,16 +2,11 @@ package com.github.namikon.angermod.config;
 
 import net.minecraftforge.common.config.Configuration;
 
-import com.github.namikon.angermod.AngerMod;
-import com.gtnewhorizon.gtnhlib.config.Config;
-
 /**
- * Specific configuration for >this< mod
+ * Loader for the old configuration files.
  *
  * @author Namikon
- *
  */
-@Config(modid = AngerMod.MODID)
 public final class LegacyAngerModConfig {
 
     public static void loadLegacyConfig(Configuration legacyConfig) {
