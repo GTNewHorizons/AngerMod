@@ -38,7 +38,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
         modid = AngerMod.MODID,
         name = "AngerMod. Makes your Mobs angry!",
         version = Tags.VERSION,
-        dependencies = "required-after:Forge@[10.13.4.1614,);required-after:Baubles@[1.0.1.10,);")
+        dependencies = "required-after:Forge@[10.13.4.1614,);required-after:Baubles@[1.0.1.10,);required-after:gtnhlib@[0.8.34,)")
 public class AngerMod {
 
     public static final String MODID = "angermod";
