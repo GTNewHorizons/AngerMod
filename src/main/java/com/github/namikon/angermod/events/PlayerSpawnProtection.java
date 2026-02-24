@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
@@ -108,7 +109,17 @@ public final class PlayerSpawnProtection {
      * @return True if it would be unsafe to alter their `capabilities.disableDamage`
      */
     public static boolean isInvalidPlayer(EntityPlayer player) {
-        return player.capabilities.isCreativeMode || hasWhitelistedItems(player);
+        return player.capabilities.isCreativeMode || isSpectatorPlayer(player) || hasWhitelistedItems(player);
+    }
+
+    /**
+     * Check if player is currently in spectator mode.
+     *
+     * In 1.7.10, spectator can be backported by other mods and is represented as a custom GameType id 3.
+     */
+    private static boolean isSpectatorPlayer(EntityPlayer player) {
+        return player instanceof EntityPlayerMP playerMP && playerMP.theItemInWorldManager.getGameType() != null
+                && playerMP.theItemInWorldManager.getGameType().getID() == 3;
     }
 
     /**
@@ -157,6 +168,7 @@ public final class PlayerSpawnProtection {
     public void onPlayerTick(PlayerTickEvent event) {
         final EntityPlayer player = event.player;
         if (player.worldObj.isRemote) return;
+        if (isSpectatorPlayer(player)) return;
         if (!player.capabilities.disableDamage) return;
         if (protectedPlayers.isEmpty()) return;
 
