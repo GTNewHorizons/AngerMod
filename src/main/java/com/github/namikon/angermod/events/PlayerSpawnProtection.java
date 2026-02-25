@@ -116,6 +116,8 @@ public final class PlayerSpawnProtection {
      * Check if player is currently in spectator mode.
      *
      * In 1.7.10, spectator can be backported by other mods and is represented as a custom GameType id 3.
+     * 
+     * @return true if the player is in spectator mode, false otherwise.
      */
     private static boolean isSpectatorPlayer(EntityPlayer player) {
         return player instanceof EntityPlayerMP playerMP && playerMP.theItemInWorldManager.getGameType() != null
