@@ -17,18 +17,34 @@ public final class FriendlyAnimalRevengeConfig {
     public static int revengeRadius;
 
     @Config.Comment("If the food eaten by the player contains these keywords, all PIGS around will become angry (or flee)")
-    @Config.DefaultStringList({ "pork" })
+    @Config.DefaultStringList({ "pork", "bacon", "ham" })
     public static String[] pigFoodTrigger;
+
+    @Config.Comment("Keywords to exclude from pig food triggers")
+    @Config.DefaultStringList({ "hamburger" })
+    public static String[] pigFoodExclusions;
 
     @Config.Comment("If the food eaten by the player contains these keywords, all COWS around will become angry (or flee)")
     @Config.DefaultStringList({ "beef" })
     public static String[] cowFoodTrigger;
 
+    @Config.Comment("Keywords to exclude from cow food triggers")
+    @Config.DefaultStringList({})
+    public static String[] cowFoodExclusions;
+
     @Config.Comment("If the food eaten by the player contains these keywords, all CHICKENS around will become angry (or flee)")
-    @Config.DefaultStringList({ "chicken", "egg" })
+    @Config.DefaultStringList({ "chicken", "egg", "wing" })
     public static String[] chickenFoodTrigger;
 
+    @Config.Comment("Keywords to exclude from chicken food triggers")
+    @Config.DefaultStringList({ "eggplant" })
+    public static String[] chickenFoodExclusions;
+
     @Config.Comment("If the food eaten by the player contains these keywords, all SHEEP around will become angry (or flee)")
-    @Config.DefaultStringList({ "mutton" })
+    @Config.DefaultStringList({ "mutton", "lamb" })
     public static String[] sheepFoodTrigger;
+
+    @Config.Comment("Keywords to exclude from sheep food triggers")
+    @Config.DefaultStringList({})
+    public static String[] sheepFoodExclusions;
 }

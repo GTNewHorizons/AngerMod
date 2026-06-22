@@ -23,16 +23,46 @@ public final class EatCookedAnimalsEvent {
 
         String itemName = event.item.getUnlocalizedName();
 
-        tryTriggerAnimals(FriendlyAnimalRevengeConfig.pigFoodTrigger, itemName, player, EntityPig.class);
-        tryTriggerAnimals(FriendlyAnimalRevengeConfig.cowFoodTrigger, itemName, player, EntityCow.class);
-        tryTriggerAnimals(FriendlyAnimalRevengeConfig.chickenFoodTrigger, itemName, player, EntityChicken.class);
-        tryTriggerAnimals(FriendlyAnimalRevengeConfig.sheepFoodTrigger, itemName, player, EntitySheep.class);
+        tryTriggerAnimals(
+                FriendlyAnimalRevengeConfig.pigFoodTrigger,
+                FriendlyAnimalRevengeConfig.pigFoodExclusions,
+                itemName,
+                player,
+                EntityPig.class);
+        tryTriggerAnimals(
+                FriendlyAnimalRevengeConfig.cowFoodTrigger,
+                FriendlyAnimalRevengeConfig.cowFoodExclusions,
+                itemName,
+                player,
+                EntityCow.class);
+        tryTriggerAnimals(
+                FriendlyAnimalRevengeConfig.chickenFoodTrigger,
+                FriendlyAnimalRevengeConfig.chickenFoodExclusions,
+                itemName,
+                player,
+                EntityChicken.class);
+        tryTriggerAnimals(
+                FriendlyAnimalRevengeConfig.sheepFoodTrigger,
+                FriendlyAnimalRevengeConfig.sheepFoodExclusions,
+                itemName,
+                player,
+                EntitySheep.class);
     }
 
-    private static void tryTriggerAnimals(String[] triggers, String item, EntityPlayer player,
+    private static void tryTriggerAnimals(String[] triggers, String[] exclusions, String item, EntityPlayer player,
             Class<? extends Entity> filter) {
-        for (String s : triggers) {
-            if (item.contains(s)) {
+        for (String trigger : triggers) {
+            if (!item.contains(trigger)) continue;
+
+            boolean excluded = false;
+            for (String exclusion : exclusions) {
+                if (item.contains(exclusion)) {
+                    excluded = true;
+                    break;
+                }
+            }
+
+            if (!excluded) {
                 damageEntitiesInRange(player, filter);
                 return;
             }
